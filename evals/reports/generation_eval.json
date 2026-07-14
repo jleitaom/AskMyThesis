@@ -1,0 +1,42 @@
+{
+  "refusal": {
+    "out_of_scope": {
+      "n": 27,
+      "declined": 27,
+      "leaked": []
+    },
+    "unanswerable_on_topic": {
+      "n": 23,
+      "declined": 23,
+      "leaked": []
+    }
+  },
+  "distance": {
+    "answerable": {
+      "n": 73,
+      "min": 0.1921411156654358,
+      "median": 0.3648996353149414,
+      "mean": 0.3558949950623186,
+      "max": 0.4802834987640381
+    },
+    "out_of_scope": {
+      "n": 27,
+      "min": 0.5231717824935913,
+      "median": 0.6593783497810364,
+      "mean": 0.6568299267027113,
+      "max": 0.7478424310684204
+    },
+    "unanswerable_on_topic": {
+      "n": 23,
+      "min": 0.35105741024017334,
+      "median": 0.4655901789665222,
+      "mean": 0.4519046596858812,
+      "max": 0.537764310836792
+    }
+  },
+  "ragas": {
+    "faithfulness": 0.9493150684931506,
+    "answer_relevancy": 0.8167698567116034,
+    "semantic_similarity": 0.825111153356092
+  }
+}

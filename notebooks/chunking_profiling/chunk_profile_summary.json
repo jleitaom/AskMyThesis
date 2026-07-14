@@ -1,0 +1,24 @@
+{
+  "tokenizer": "BAAI/bge-m3",
+  "target_chunk_size": 500,
+  "n_chunks": 119,
+  "token_stats": {
+    "count": 119.0,
+    "mean": 379.8,
+    "std": 133.4,
+    "min": 62.0,
+    "50%": 457.0,
+    "95%": 515.0,
+    "max": 524.0
+  },
+  "pct_below_min_useful": 0.008,
+  "n_above_context": 0,
+  "duplicate_chunk_texts": 0,
+  "chunks_per_section_mean": 1.9,
+  "levels": {
+    "subsection": 60,
+    "section": 47,
+    "chapter": 12
+  },
+  "sections_dropped": 0
+}

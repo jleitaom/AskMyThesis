@@ -1,0 +1,1133 @@
+[
+  {
+    "id": "q0001",
+    "question": "Que fatores levaram o setor de retalho alimentar a apostar em técnicas Lean e em modelos de simulação na gestão das suas operações?",
+    "relevant_sections": [
+      "1.1"
+    ],
+    "reference_answer": "A crescente competitividade do setor, clientes cada vez mais exigentes e a procura por eficiência operacional tornaram o Lean um passo relevante, sendo os armazéns uma área prioritária por concentrarem a eliminação de desperdício; os modelos de simulação surgem como recurso de apoio à decisão, por permitirem testar sistemas hipotéticos sem implicações práticas ou financeiras.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0002",
+    "question": "Quais são os principais objetivos do projeto e que tipo de resultados se esperam alcançar?",
+    "relevant_sections": [
+      "1.2"
+    ],
+    "reference_answer": "O projeto visa melhorar a eficiência operacional e a ergonomia dos fluxos de receção, despicking, armazenamento e reposição de produtos nos supermercados MC, recorrendo à modelação de processos e a simulação discreta para validar propostas de melhoria baseadas no conceito Lean. Esperam-se ganhos na eficiência e eficácia do fluxo de produtos, a redução de esforços ergonómicos e o estudo de diferentes padrões de fluxo.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0003",
+    "question": "Que metodologia de investigação foi adotada e como se caracteriza?",
+    "relevant_sections": [
+      "1.3"
+    ],
+    "reference_answer": "Foi adotada a metodologia de investigação-ação (action research), conhecida por 'learning by doing', de natureza cíclica e organizada em cinco fases: diagnóstico e análise crítica do estado atual, planeamento das ações, implementação, análise pós-implementação e compilação de conclusões.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0004",
+    "question": "Como está organizada a estrutura da dissertação?",
+    "relevant_sections": [
+      "1.4"
+    ],
+    "reference_answer": "A dissertação divide-se em sete capítulos: introdução, enquadramento teórico, enquadramento do projeto, descrição analítica e parametrização do modelo, desenvolvimento e modelação das operações de loja, interpretação e discussão dos resultados com propostas de melhoria, e conclusão.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0005",
+    "question": "Em que contexto histórico surgiu o Sistema de Produção Toyota e qual era o seu propósito?",
+    "relevant_sections": [
+      "2.1"
+    ],
+    "reference_answer": "Surgiu no Japão após a Segunda Guerra Mundial, quando a Toyota lutava pela sobrevivência e competia com a produção em massa europeia e americana; num mercado que exigia grande variedade em pequenas quantidades, criou-se um sistema focado no aumento da eficiência produtiva e na eliminação de desperdícios através da criação de fluxo.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0006",
+    "question": "Quais são os princípios do Lean Thinking?",
+    "relevant_sections": [
+      "2.1"
+    ],
+    "reference_answer": "São cinco: a definição de valor (feita pelo cliente final), a identificação e mapeamento da cadeia de valor, a criação de fluxo contínuo, o sistema de produção pull (guiado pelas necessidades do cliente) e a procura pela perfeição através da melhoria contínua (Kaizen).",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0007",
+    "question": "Que tipos de desperdício são considerados na filosofia Lean?",
+    "relevant_sections": [
+      "2.1"
+    ],
+    "reference_answer": "Liker distingue três tipos: Muda (desperdício), Mura (irregularidade) e Muri (sobrecarga). Ohno identificou sete formas de muda — transporte, inventário, movimento, esperas, sobreprodução, sobreprocessamento e defeitos — às quais Womack e Jones acrescentaram uma oitava, o talento não utilizado.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0008",
+    "question": "O que é a On-Shelf Availability (OSA) e porque é considerada importante no retalho?",
+    "relevant_sections": [
+      "2.2"
+    ],
+    "reference_answer": "A OSA mede a presença do produto na prateleira, nas condições de venda, no local e no momento certos, sendo um dos indicadores mais importantes de eficiência operacional da loja por impactar a procura atual e futura; para níveis de 90% ou mais, melhorias de 1% podem aumentar as vendas em mais de 0,8%.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0009",
+    "question": "O que significa o indicador Out-of-Stock (OOS) e que tipos existem?",
+    "relevant_sections": [
+      "2.2"
+    ],
+    "reference_answer": "O OOS mede o número de produtos que não estão disponíveis na prateleira ou que não reúnem condições de venda, estando inversamente relacionado com a OSA; classifica-se em Store-OOS (produto indisponível na loja) e Shelf-OOS (produto com stock na loja, mas que o cliente não consegue comprar).",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0010",
+    "question": "Que casos de sucesso de aplicação de princípios Lean no retalho são mencionados?",
+    "relevant_sections": [
+      "2.2"
+    ],
+    "reference_answer": "São referidos a Walmart e a Staples, que construíram cadeias de abastecimento eficientes aplicando princípios Lean fundamentais, e o Mercadona, cujo modelo de negócio se organiza em torno do cliente, focando-se na eliminação de tudo o que não acrescenta valor.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0011",
+    "question": "Que dimensões são usadas para classificar os modelos de simulação?",
+    "relevant_sections": [
+      "2.3"
+    ],
+    "reference_answer": "Os modelos de simulação classificam-se segundo três dimensões: estático versus dinâmico, contínuo versus discreto e determinístico versus estocástico.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0012",
+    "question": "Em que consiste a simulação de eventos discretos (DES)?",
+    "relevant_sections": [
+      "2.3"
+    ],
+    "reference_answer": "É a modelação de sistemas que evoluem ao longo do tempo em resposta a alterações instantâneas em momentos específicos e separados (events), que alteram o estado do sistema; surgiu no final dos anos 50, por autoria de Keith Douglas Tocher.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0013",
+    "question": "Que software de simulação foi utilizado e como é que ele funciona?",
+    "relevant_sections": [
+      "2.3"
+    ],
+    "reference_answer": "Foi utilizado o Simio, uma framework de modelação baseada em objetos inteligentes, em que os modelos se constroem combinando vários objetos; resulta num sistema de modelação gráfica em vez de uma linguagem de programação, exigindo competências de modelação e não de programação.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0014",
+    "question": "O que é a ergonomia e que domínios a constituem?",
+    "relevant_sections": [
+      "2.4"
+    ],
+    "reference_answer": "A ergonomia, conhecida como 'a ciência do trabalho', é a disciplina que estuda as interações entre os seres humanos e os elementos que os rodeiam para otimizar o bem-estar e o desempenho dos sistemas; é constituída por três domínios: físico, cognitivo e organizacional.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0015",
+    "question": "Em que consiste a equação de levantamento do NIOSH?",
+    "relevant_sections": [
+      "2.4"
+    ],
+    "reference_answer": "É uma ferramenta de avaliação de tarefas de elevação manual de carga com as duas mãos, que calcula o Peso Limite Recomendável (PLR) e o Índice de Elevação (IE); um IE com rácio superior a 1 indica a necessidade de corrigir a situação e superior a 3 alerta para uma correção urgente.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0016",
+    "question": "Que posição ocupa a MC no mercado de retalho alimentar português?",
+    "relevant_sections": [
+      "3.1"
+    ],
+    "reference_answer": "A MC é a marca líder do retalho alimentar em Portugal, com cerca de 24,90% de quota de mercado; em 2023 apresentou um volume de negócios de 6.607 milhões de euros, contando com 1452 lojas e mais de 38.000 colaboradores.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0017",
+    "question": "O que é o Modelo Y e em que eixos assenta?",
+    "relevant_sections": [
+      "3.2"
+    ],
+    "reference_answer": "O Modelo Y é um Modelo de Gestão Integrada do Risco, resultante de uma parceria entre a Universidade do Minho, a MC e o Instituto Kaizen, que assenta em três eixos: Ergonomia, Segurança e Eficiência Operacional, os quais fundamentam as decisões dos cenários e testes do estudo.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0018",
+    "question": "Qual é o âmbito do Projeto A e que operações abrange?",
+    "relevant_sections": [
+      "3.3"
+    ],
+    "reference_answer": "O Projeto A atua na retaguarda das lojas, procurando melhorar as atividades que influenciam o percurso desde a chegada da carga até à colocação dos produtos na placa de vendas — receção, despicking, armazenamento, gestão de armazém e reposição — incidindo sobre produtos de Logística Interna Alimentar (LIA) e Não Alimentar (LINA) não frescos.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0019",
+    "question": "Em que se distinguem os grupos de produtos LIA e LINA definidos pela MC?",
+    "relevant_sections": [
+      "3.3"
+    ],
+    "reference_answer": "O grupo LIA inclui todos os produtos de caráter alimentar não fresco vendidos nos supermercados, como bolachas, cereais, leite, café ou enlatados, enquanto o grupo LINA inclui produtos de caráter não alimentar, como artigos de bazar, higiene e bem-estar.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0020",
+    "question": "Que loja foi escolhida para o estudo e quais são as suas características?",
+    "relevant_sections": [
+      "3.4"
+    ],
+    "reference_answer": "O estudo decorreu no Continente Modelo de Paredes, um supermercado piloto do Norte do país inaugurado em 2000, com uma área total de 3634 m², dos quais cerca de 55% se destinam à loja e cerca de 11% (400 m²) à retaguarda.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0021",
+    "question": "Em que consiste o processo de despicking realizado na retaguarda da loja?",
+    "relevant_sections": [
+      "3.4"
+    ],
+    "reference_answer": "O despicking caracteriza-se por separar e organizar uma palete multiproduto (com produtos de várias categorias) em várias paletes monoproduto (com produtos da mesma categoria), de forma a facilitar a posterior reposição em loja.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0022",
+    "question": "Quais são as principais atividades que compõem o percurso dos produtos dentro da loja?",
+    "relevant_sections": [
+      "3.4"
+    ],
+    "reference_answer": "O percurso divide-se em três grandes atividades: a descarga, após a chegada do camião; o tratamento de paletes, que prepara os produtos para reposição e engloba o despicking; e a reposição, momento final em que o colaborador coloca os produtos à disposição do cliente nas placas de venda.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0023",
+    "question": "Que período e que volume de dados serviram de base à parametrização do modelo de simulação?",
+    "relevant_sections": [
+      "4"
+    ],
+    "reference_answer": "Foram utilizados registos históricos do Continente Modelo de Paredes entre 2 de agosto e 20 de novembro de 2023, que contabilizam 133.921 entradas de produtos distribuídas por 5.297 paletes diferentes ao longo desse período.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0024",
+    "question": "Como foram tratadas as categorias de produtos para a construção do modelo?",
+    "relevant_sections": [
+      "4"
+    ],
+    "reference_answer": "As 119 categorias padrão inicialmente identificadas foram agrupadas em apenas 10 categorias mais abrangentes, focadas nas operações LIA, tendo-se ainda procedido a uma reclassificação dessas categorias para identificar quais passariam pelo processo de despicking.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0025",
+    "question": "Que distribuição estatística foi escolhida para representar o número de caixas por palete?",
+    "relevant_sections": [
+      "4"
+    ],
+    "reference_answer": "Foi selecionada a distribuição Lognormal (shape 0,18; loc -20,00; scale 146,88), por ter sido a que melhor se ajustou aos dados segundo os testes de ajuste realizados.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0026",
+    "question": "Que distribuição foi adotada para representar o peso das caixas manuseadas?",
+    "relevant_sections": [
+      "4"
+    ],
+    "reference_answer": "Adotou-se a distribuição Lognormal (shape 0,52; loc -1,56; scale 6,14) para representar o peso das caixas, por ser a que melhor se ajustou aos dados.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0027",
+    "question": "Que características das paletes foram modeladas para reproduzir a variabilidade das operações?",
+    "relevant_sections": [
+      "4"
+    ],
+    "reference_answer": "Foram modeladas características como o número de caixas que cada palete transporta, o peso de cada caixa, a altura da palete e o número de categorias diferentes presentes na palete, por influenciarem tanto a eficiência operacional como o esforço ergonómico das operações.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0028",
+    "question": "Como foi modelada a dificuldade de manuseamento dos produtos durante o despicking?",
+    "relevant_sections": [
+      "5.1"
+    ],
+    "reference_answer": "Cada palete foi dividida em 12 partes que representam diferentes alcances funcionais horizontais e verticais, estando cada zona associada a um fator de tempo que reflete a dificuldade de manuseamento; o tempo de despicking base segue uma distribuição uniforme entre 6 e 10 segundos, ao qual se acresce esse fator extra.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0029",
+    "question": "Que tipos de paletes, quanto à altura, foram considerados na modelação do despicking?",
+    "relevant_sections": [
+      "5.1"
+    ],
+    "reference_answer": "Consideraram-se duas paletes-tipo, com cerca de 1,80 m e cerca de 2,10 m de altura, sendo que nas paletes mais altas as posições de maior alcance têm um fator de tempo superior, para realçar a maior exigência física do manuseamento.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0030",
+    "question": "Como foi construída a matriz de distâncias usada para analisar as movimentações na loja?",
+    "relevant_sections": [
+      "5.2"
+    ],
+    "reference_answer": "A matriz de distâncias entre todos os nodes do sistema foi desenvolvida a partir da planta da loja em formato CAD, que serviu para calcular as distâncias entre cada ponto de interesse para o modelo de simulação.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0031",
+    "question": "Como é que o modelo decide os corredores onde a reposição é realizada?",
+    "relevant_sections": [
+      "5.2"
+    ],
+    "reference_answer": "O modelo regista o número de tipos diferentes de produtos em cada palete e, de forma probabilística, escolhe os corredores de reposição (assumindo que mais tipos implicam percorrer mais corredores); contempla ainda uma probabilidade de 50% de o colaborador ter de repetir corredores já percorridos, refletindo situações reais.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0032",
+    "question": "Que alterações operacionais resultam da substituição de paletes por carrinhos no transporte de produtos?",
+    "relevant_sections": [
+      "5.3"
+    ],
+    "reference_answer": "Os carrinhos exigem uma tabela de tempos de despicking distinta, com uma redução de cerca de 10%, têm maior velocidade de transporte (0,7 m/s, face a 0,55 m/s das paletes), mas apresentam menor capacidade, modelada por uma distribuição uniforme entre 60 e 100 artigos.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0033",
+    "question": "Em que consiste o cenário alternativo de Early Trigger?",
+    "relevant_sections": [
+      "5.3"
+    ],
+    "reference_answer": "O Early Trigger representa situações em que se reduz o tamanho do lote de trabalho: em vez de despickar todas as paletes antes de repor, o colaborador despicka um número de paletes igual ao trigger e inicia logo a reposição dos produtos resultantes, repetindo este ciclo até todas as paletes estarem tratadas.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0034",
+    "question": "O que caracteriza o cenário de fluxo contínuo na modelação das operações?",
+    "relevant_sections": [
+      "5.3"
+    ],
+    "reference_answer": "No fluxo contínuo, o despicking passa a colocar todos os produtos na mesma posição, ignorando a separação por categoria, e a reposição inicia-se assim que a palete ou carrinho de reposição atinge a sua capacidade máxima, procurando transportar os produtos de forma rápida e rítmica para as prateleiras.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0035",
+    "question": "Que métodos de avaliação ergonómica foram incorporados no modelo de simulação?",
+    "relevant_sections": [
+      "5.4"
+    ],
+    "reference_answer": "Foram incorporados o Guia de Mital e a Equação de Elevação NIOSH 91, escolhidos por se adequarem às tarefas de manuseamento manual e de movimentos repetitivos com cargas presentes nas operações intralogísticas em estudo.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0036",
+    "question": "Como foram obtidos os coeficientes de atrito utilizados no cálculo das forças?",
+    "relevant_sections": [
+      "5.4"
+    ],
+    "reference_answer": "Realizou-se um estudo presencial no Continente Modelo de Paredes, no qual, com um dinamómetro, se recolheram as forças iniciais e de manutenção em paletes de pesos distintos (212, 358 e 666 kg) e em carrinhos, a partir das quais se aproximaram os coeficientes de atrito estático e dinâmico.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0037",
+    "question": "Quantos cenários resultaram do plano experimental e como se distribuem?",
+    "relevant_sections": [
+      "5.5"
+    ],
+    "reference_answer": "O plano experimental resultou num total de 1776 cenários, dos quais 576 correspondem ao conjunto de análise operacional e os restantes 1200 ao conjunto de análise ergonómica.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0038",
+    "question": "Como foi determinado o número de replicações usado nas simulações?",
+    "relevant_sections": [
+      "6.1"
+    ],
+    "reference_answer": "Utilizou-se a métrica do half-width do intervalo de confiança a partir de dez replicações do cenário padrão e de indicadores operacionais e ergonómicos selecionados; aplicando a fórmula para um nível de confiança de 95%, fixaram-se 30 replicações para a análise operacional e 20 para a análise ergonómica.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0039",
+    "question": "Que conclusões se retiram do comportamento operacional do cenário padrão?",
+    "relevant_sections": [
+      "6.2"
+    ],
+    "reference_answer": "O cenário padrão apresenta um WIP médio elevado, representando quase metade dos produtos despickados, e um tempo médio de atravessamento alto, evidenciando que o tratamento em lotes do tamanho de todas as paletes descarregadas no dia gera grandes ineficiências no fluxo de produtos para o cliente.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0040",
+    "question": "Qual foi o impacto operacional da introdução de um comboio logístico?",
+    "relevant_sections": [
+      "6.2"
+    ],
+    "reference_answer": "O comboio logístico não altera significativamente o despicking nem o WIP da retaguarda, mas reduz a distância média total percorrida pelo colaborador em cerca de 35%, ainda que aumente o tempo de ciclo de transporte para a loja por o colaborador transportar mais produtos de uma só vez.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0041",
+    "question": "Que efeito tem a redução do tamanho do lote de trabalho (trigger) no desempenho operacional?",
+    "relevant_sections": [
+      "6.2"
+    ],
+    "reference_answer": "Reduzir o trigger diminui acentuadamente o WIP da retaguarda (cerca de 85% com um trigger igual a 1) e o tempo de atravessamento, tornando a reposição mais rápida e rítmica; em contrapartida, aumenta o tempo de ciclo de despicking, o número de paletes construídas e a distância total percorrida.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0042",
+    "question": "Como se compara o desempenho do fluxo contínuo com o da redução do tamanho do lote, em termos operacionais e ergonómicos?",
+    "relevant_sections": [
+      "6.2",
+      "6.3"
+    ],
+    "reference_answer": "Operacionalmente, o fluxo contínuo melhora face ao cenário padrão mas fica aquém do trigger igual a 1 (aproximando-se do trigger 2), embora reponha o primeiro produto mais cedo; ergonomicamente, ao contrário da redução do lote, piora praticamente todos os indicadores face ao cenário padrão, não garantindo a saúde física do colaborador.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0043",
+    "question": "Que níveis de esforço apresenta o cenário padrão na análise ergonómica?",
+    "relevant_sections": [
+      "6.3"
+    ],
+    "reference_answer": "O cenário padrão apresenta níveis de esforço elevados, com um índice máximo de NIOSH de 1,63 (superior ao aceitável) e índices de Mital que indicam necessidade de intervenção urgente, sendo os resultados mais desfavoráveis para o género feminino.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0044",
+    "question": "Qual foi o efeito da implementação de um sistema de inclinação de paletes nos índices ergonómicos?",
+    "relevant_sections": [
+      "6.3"
+    ],
+    "reference_answer": "O sistema de inclinação de paletes provocou uma redução significativa do índice de NIOSH, revelando-se o fator mais impactante nesse aspeto por posicionar os produtos de forma mais favorável à elevação, embora não gere alterações significativas nos restantes indicadores.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0045",
+    "question": "De que forma a variação do peso dos artigos afeta os índices ergonómicos?",
+    "relevant_sections": [
+      "6.3"
+    ],
+    "reference_answer": "Como todos os índices estudados dependem do peso da carga, o aumento do peso dos artigos piora os resultados ergonómicos, reforçando a importância de minimizar o peso das cargas enviadas para as lojas de modo a proteger a saúde física dos colaboradores.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0046",
+    "question": "Que combinação de soluções apresenta o melhor desempenho combinado, operacional e ergonómico?",
+    "relevant_sections": [
+      "6.4"
+    ],
+    "reference_answer": "A combinação da redução do tamanho do lote de trabalho (trigger igual a 1) com a substituição das paletes de reposição por carrinhos e a implementação de um sistema de inclinação de paletes constitui a configuração com melhor desempenho conjunto em eficiência operacional e índices ergonómicos.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0047",
+    "question": "Que valores caracterizam o desempenho do cenário padrão na análise crítica?",
+    "relevant_sections": [
+      "6.4"
+    ],
+    "reference_answer": "No cenário padrão, o WIP médio na área de despicking foi de cerca de 382 artigos, o tempo de ciclo médio de despicking das paletes de cerca de 25 minutos, o tempo médio de atravessamento por produto de cerca de 550 minutos e a distância total percorrida de cerca de 688 metros; os índices mais críticos foram o de força inicial máxima feminina (2,18) e o de NIOSH máximo (1,63).",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0048",
+    "question": "Qual foi o principal objetivo do projeto e que tipo de ferramenta resultou dele?",
+    "relevant_sections": [
+      "7.1"
+    ],
+    "reference_answer": "O objetivo principal foi desenvolver um modelo de simulação que representasse o funcionamento real das operações intralogísticas de uma loja de retalho alimentar, avaliando a eficiência operacional e ergonómica das atividades de despicking e reposição; daí resultou uma ferramenta inovadora e multifuncional de apoio à tomada de decisão.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0049",
+    "question": "Que aprendizagem o estudo revelou sobre a aplicação de conceitos industriais ao retalho?",
+    "relevant_sections": [
+      "7.1"
+    ],
+    "reference_answer": "O estudo revelou que nem todos os conceitos industriais podem ser aplicados universalmente a outros setores sem a devida adequação ao contexto: a redução do tamanho do lote deu resultados muito positivos, enquanto o fluxo contínuo, eficaz na indústria, não alcançou o desempenho esperado nas atividades de despicking e reposição.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0050",
+    "question": "Que trabalhos e pesquisas futuras são recomendados a partir deste estudo?",
+    "relevant_sections": [
+      "7.2"
+    ],
+    "reference_answer": "Recomenda-se desenvolver mecanismos para adaptar o modelo a outros contextos, nomeadamente industriais, e transformá-lo numa nova ferramenta dedicada à avaliação ergonómica, capaz de se ajustar a diferentes setores e de realizar estudos de ergonomia mais detalhados e profundos.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0051",
+    "question": "What are the main objectives of the project and what kind of results are expected?",
+    "relevant_sections": [
+      "1.2"
+    ],
+    "reference_answer": "The project aims to improve the operational efficiency and ergonomics of the reception, despicking, storage and replenishment flows in MC supermarkets, using process modelling and discrete-event simulation to validate Lean-based improvement proposals. Expected outcomes include a more efficient product flow, reduced ergonomic effort, and the study of different flow patterns.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0052",
+    "question": "What research methodology did the study adopt, and how is it characterised?",
+    "relevant_sections": [
+      "1.3"
+    ],
+    "reference_answer": "The study adopts an action-research methodology, known as 'learning by doing', which is cyclical and organised into five phases: diagnosis and critical analysis of the current state, planning of actions, implementation, post-implementation analysis, and compilation of conclusions.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0053",
+    "question": "What are the principles of Lean Thinking?",
+    "relevant_sections": [
+      "2.1"
+    ],
+    "reference_answer": "There are five: defining value (from the end customer's perspective), identifying and mapping the value stream, creating continuous flow, establishing a pull production system driven by customer demand, and pursuing perfection through continuous improvement (Kaizen).",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0054",
+    "question": "What types of waste are considered in the Lean philosophy?",
+    "relevant_sections": [
+      "2.1"
+    ],
+    "reference_answer": "Liker distinguishes three: Muda (waste), Mura (unevenness) and Muri (overburden). Ohno identified seven forms of muda — transport, inventory, motion, waiting, overproduction, over-processing and defects — to which Womack and Jones added an eighth, unused talent.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0055",
+    "question": "How is the Toyota Production System House structured, according to the study?",
+    "relevant_sections": [
+      "2.1.1"
+    ],
+    "reference_answer": "The Toyota Production System House, an illustration developed by Fujio Cho in 1973, rests on a base of levelled production (Heijunka), which enables stable and standardised processes, and is supported by two main pillars: Just-in-Time and Jidoka (autonomation, or automation with a human touch). At its centre are people involved in Kaizen (continuous improvement), and its roof represents the system's goals: better quality, lower cost, shorter lead time, better safety and high morale.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0056",
+    "question": "What is On-Shelf Availability (OSA) and why is it important in retail?",
+    "relevant_sections": [
+      "2.2"
+    ],
+    "reference_answer": "OSA measures the presence of a product on the shelf, in sellable condition, in the right place at the right time, and is one of the most important indicators of a store's operational performance because it affects current and future demand; for levels of 90% or higher, a 1% improvement can raise product sales by more than 0.8%.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0057",
+    "question": "What is discrete-event simulation (DES)?",
+    "relevant_sections": [
+      "2.3"
+    ],
+    "reference_answer": "It is the modelling of systems that evolve over time in response to instantaneous changes at specific, separate moments (events) that change the state of the system; it emerged in the late 1950s and is attributed to Keith Douglas Tocher.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0058",
+    "question": "What are the stages involved in building a discrete-event simulation model?",
+    "relevant_sections": [
+      "2.3.3"
+    ],
+    "reference_answer": "According to Smith & Sturrock (2021), building a simulation model follows five stages: conceptual design (requiring in-depth knowledge of the system to be modelled), input analysis (characterising input variables and fitting statistical distributions to the data), model development (turning the conceptual model into an executable one, including verification and validation), and finally output analysis and experimentation. The process is not strictly sequential but rather iterative, needing repeated checks and corrections.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0059",
+    "question": "What is ergonomics and which domains make it up?",
+    "relevant_sections": [
+      "2.4"
+    ],
+    "reference_answer": "Ergonomics, known as 'the science of work', is the discipline that studies the interactions between humans and the elements around them in order to optimise well-being and overall system performance; it is made up of three domains: physical, cognitive and organisational.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0060",
+    "question": "What position does MC hold in the Portuguese food-retail market?",
+    "relevant_sections": [
+      "3.1"
+    ],
+    "reference_answer": "MC is the market leader in food retail in Portugal, with around 24.90% market share; in 2023 it reported a turnover of 6,607 million euros, with 1,452 stores and more than 38,000 employees.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0061",
+    "question": "What is the scope of Project A and which operations does it cover?",
+    "relevant_sections": [
+      "3.3"
+    ],
+    "reference_answer": "Project A acts on the store back-office, seeking to improve the activities that influence the path from the arrival of goods to placing products on the sales floor — reception, despicking, storage, warehouse management and replenishment — focusing on non-fresh Food (LIA) and Non-Food (LINA) internal-logistics products.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0062",
+    "question": "Which store was chosen for the study and what are its characteristics?",
+    "relevant_sections": [
+      "3.4"
+    ],
+    "reference_answer": "The study was carried out at the Continente Modelo in Paredes, a pilot supermarket in the north of Portugal that opened in 2000, with a total area of 3,634 m², of which about 55% is the store and about 11% (400 m²) is the back-office.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0063",
+    "question": "How is the store's back-office organised, and how do picking and despicking differ?",
+    "relevant_sections": [
+      "3.4.2"
+    ],
+    "reference_answer": "The back-office is divided into two parts according to the main activity of each: the unloading zone, where a worker uses a forklift to unload all the goods sent by the distribution centre and line them up at the entrance of the storage zone, and the storage zone, where storage, picking and despicking take place. Picking consists of collecting stored products, usually to replenish them in the store, whereas despicking is the separation of multi-product pallets (with products from different categories) into single-product pallets (with products of the same category).",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0064",
+    "question": "What time period and volume of data underpinned the parametrisation of the simulation model?",
+    "relevant_sections": [
+      "4"
+    ],
+    "reference_answer": "Historical records from the Continente Modelo in Paredes between 2 August and 20 November 2023 were used, accounting for 133,921 product entries distributed across 5,297 different pallets over that period.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0065",
+    "question": "How was the difficulty of handling products during despicking modelled?",
+    "relevant_sections": [
+      "5.1"
+    ],
+    "reference_answer": "Each pallet was divided into 12 parts representing different horizontal and vertical functional reaches, with each zone associated with a time factor reflecting handling difficulty; the base despicking time follows a uniform distribution between 6 and 10 seconds, to which that extra factor is added.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0066",
+    "question": "Which ergonomic assessment methods were incorporated into the simulation model?",
+    "relevant_sections": [
+      "5.4"
+    ],
+    "reference_answer": "The Mital Guide and the NIOSH 91 Lifting Equation were incorporated, chosen because they are suited to the manual-handling and repetitive load-movement tasks found in the intralogistics operations under study.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0067",
+    "question": "What does the NIOSH 91 lifting equation calculate, and which parameters does it take into account?",
+    "relevant_sections": [
+      "5.4.2"
+    ],
+    "reference_answer": "The NIOSH 91 lifting equation calculates the Recommended Weight Limit (RWL) — the weight a worker can safely lift in a given task — as the product of a set of multipliers, and from it the Lifting Index (LI), the ratio between the actual load and the RWL. It considers parameters such as the vertical height at the start of the lift (V), the horizontal distance between the hands and the ankles (H), the travel distance (D), trunk asymmetry relative to the sagittal plane (A), the duration of the handling period (T), the frequency of lifts (F) and the quality of the grip (P). A Lifting Index above 1 signals the need to correct the situation, and above 3 an urgent correction.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0068",
+    "question": "What effect does reducing the work batch size (trigger) have on operational performance?",
+    "relevant_sections": [
+      "6.2"
+    ],
+    "reference_answer": "Reducing the trigger sharply lowers the back-office WIP (about 85% with a trigger of 1) and the throughput time, making replenishment faster and more rhythmic; in exchange, it increases the despicking cycle time, the number of pallets built and the total distance travelled.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0069",
+    "question": "What was the effect of varying the number of workers allocated to despicking and replenishment?",
+    "relevant_sections": [
+      "6.2.5"
+    ],
+    "reference_answer": "Allocating more workers to the despicking and replenishment activities (against the standard scenario of a single worker) significantly reduces the average despicking cycle time for both products and pallets, and proportionally lowers the throughput time and the transport-to-store cycle time. However, these indicators show a slightly curvilinear evolution, indicating diminishing returns: the additional benefits become progressively smaller, so the balance between the number of workers and the associated costs must be carefully assessed to keep an optimised cost-benefit ratio.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0070",
+    "question": "Which combination of solutions delivers the best combined operational and ergonomic performance?",
+    "relevant_sections": [
+      "6.4"
+    ],
+    "reference_answer": "Combining the reduction of the work batch size (trigger equal to 1) with replacing replenishment pallets with carts and implementing a pallet-tilting system is the configuration with the best joint performance in operational efficiency and ergonomic indices.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "q0071",
+    "question": "Quem é o autor desta dissertação?",
+    "relevant_sections": [
+      "0"
+    ],
+    "reference_answer": "A dissertação foi escrita por José Luís Leitão de Matos, no âmbito do Mestrado em Engenharia e Gestão de Operações da Universidade do Minho.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0072",
+    "question": "Quem orientou esta dissertação de mestrado?",
+    "relevant_sections": [
+      "0"
+    ],
+    "reference_answer": "A dissertação foi orientada pelo Professor Doutor Bruno Samuel Ferreira Gonçalves e pelo Professor Doutor Rui Manuel de Sá Pereira de Lima.",
+    "language": "pt",
+    "type": "answerable"
+  },
+  {
+    "id": "q0073",
+    "question": "Who is the author of this thesis and what is its title?",
+    "relevant_sections": [
+      "0"
+    ],
+    "reference_answer": "The thesis was written by José Luís Leitão de Matos and is titled 'Análise e melhoria de fluxos em operações intralogísticas de retalho através da aplicação de conceitos Lean e simulação discreta', submitted at the University of Minho.",
+    "language": "en",
+    "type": "answerable"
+  },
+  {
+    "id": "n0001",
+    "question": "Qual é a montanha mais alta do mundo?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0002",
+    "question": "Quantos jogadores tem uma equipa de futebol em campo?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0003",
+    "question": "Como se prepara um bolo de chocolate caseiro?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0004",
+    "question": "Quem pintou a Mona Lisa?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0005",
+    "question": "Qual é a fórmula química da água?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0006",
+    "question": "Em que ano é que o ser humano chegou pela primeira vez à Lua?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0007",
+    "question": "Quais são os planetas do sistema solar?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0008",
+    "question": "Quem escreveu a obra 'Os Lusíadas'?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0009",
+    "question": "Qual é a moeda oficial do Japão?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0010",
+    "question": "Quais são as regras básicas do jogo de xadrez?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0011",
+    "question": "Qual é a distância média entre a Terra e o Sol?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0012",
+    "question": "Como se cultiva tomate numa horta?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0013",
+    "question": "Qual é o maior oceano do planeta?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0014",
+    "question": "Quem foi o primeiro presidente da República Portuguesa?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0015",
+    "question": "Como funciona um motor de combustão interna?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0016",
+    "question": "Que ingredientes são necessários para fazer pão caseiro?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0017",
+    "question": "Qual é a capital da Nova Zelândia?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0018",
+    "question": "What is the boiling point of water at sea level?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0019",
+    "question": "Who won the FIFA World Cup in 2018?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0020",
+    "question": "How do you say 'thank you' in Japanese?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0021",
+    "question": "What is the tallest building in the world?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0022",
+    "question": "How many strings does a standard classical guitar have?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0023",
+    "question": "What is the chemical symbol for gold?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0024",
+    "question": "Which country hosted the 2016 Summer Olympic Games?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0025",
+    "question": "How do you convert Celsius to Fahrenheit?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0026",
+    "question": "Who wrote the play 'Romeo and Juliet'?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0027",
+    "question": "What is the longest river in the world?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "out_of_scope"
+  },
+  {
+    "id": "n0028",
+    "question": "Que algoritmo de previsão da procura foi implementado para antecipar as encomendas da loja?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0029",
+    "question": "Qual foi o retorno financeiro (ROI) estimado da implementação das propostas de melhoria?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0030",
+    "question": "Qual é o nível de On-Shelf Availability (OSA) medido no Continente Modelo de Paredes?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0031",
+    "question": "Que método de avaliação postural, como o RULA ou o REBA, foi utilizado para analisar as tarefas?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0032",
+    "question": "Como variam os tempos de despicking ao longo das diferentes horas do dia?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0033",
+    "question": "Qual é a taxa de rotatividade (turnover) dos colaboradores da loja em estudo?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0034",
+    "question": "Que comparação de desempenho foi feita entre o software Simio e o software Arena ou FlexSim?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0035",
+    "question": "Quanto tempo demora, em média, a atividade de descarga do camião na loja?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0036",
+    "question": "Qual é o número total de SKUs (referências) geridos pela loja em estudo?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0037",
+    "question": "Que poupança energética resulta da utilização de um comboio logístico motorizado?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0038",
+    "question": "Qual é a pegada de carbono (emissões de CO2) associada às operações logísticas da loja?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0039",
+    "question": "Como é que a variação da velocidade de transporte das paletes afeta os resultados operacionais?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0040",
+    "question": "Qual é o custo de aquisição de um sistema de inclinação de paletes?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0041",
+    "question": "Que impacto tem a temperatura da retaguarda no desempenho dos colaboradores?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0042",
+    "question": "Que programa de formação dos colaboradores foi proposto para reduzir os erros de reposição?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "pt",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0043",
+    "question": "How does the store handle reverse logistics and the return of unsold or damaged products to the distribution centre?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0044",
+    "question": "What is the maintenance schedule and battery autonomy of the forklift used in the unloading zone?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0045",
+    "question": "How do the lighting and illumination conditions in the back-office affect the ergonomic risk of the operations?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0046",
+    "question": "Which version of the Simio software was used and what was its licensing cost?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0047",
+    "question": "What is the annual product shrinkage or stock-loss rate recorded at the store under study?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0048",
+    "question": "How do seasonal demand peaks, such as Christmas, change the volume of pallets received by the store?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0049",
+    "question": "What shift-scheduling model is used to allocate workers across the working day in the store?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "unanswerable_on_topic"
+  },
+  {
+    "id": "n0050",
+    "question": "How was customer satisfaction measured to evaluate the impact of the proposed improvements?",
+    "relevant_sections": [],
+    "reference_answer": null,
+    "language": "en",
+    "type": "unanswerable_on_topic"
+  }
+]
