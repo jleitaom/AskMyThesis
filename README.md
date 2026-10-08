@@ -19,7 +19,7 @@ It was presented as the final project for the **Deep Learning with TensorFlow** 
 
 ## Architecture
 
-![AskMyThesis architecture: preprocessing and indexing (PDF → preprocessing → chunking → bge-m3 embeddings → Chroma vector database), then retrieval and generation (PT/EN query → bge-m3 → Chroma → retrieval → Qwen2.5-7B → answer), with the retrieval and generation half covered by evaluation](docs/architecture.png)
+![AskMyThesis architecture: preprocessing and indexing (PDF → preprocessing → chunking → bge-m3 embeddings → Chroma vector database), then retrieval and generation (PT/EN query → bge-m3 → Chroma → retrieval → Qwen2.5-7B → answer), with the retrieval and generation half covered by evaluation](assets/architecture.png)
 
 The same flow, mapped to the scripts:
 
@@ -60,15 +60,12 @@ AskMyThesis/
 │   ├── generation.py               # Retrieve → grounded prompt → LLM (ollama | hf backend)
 │   ├── evaluate_retrieval.py       # recall@k / hit@k / MRR vs the golden set
 │   └── evaluate_generation.py      # RAGAS + refusal + distance-by-type checks
+├── assets/architecture.png         # architecture diagram
 ├── data/
 │   ├── raw/thesis.pdf              # source document
 │   ├── processed/                  # extracted_sections / cleaned_sections / chunks (JSON)
 │   ├── golden/golden.json          # hand-built eval set
 │   └── chroma/                     # persisted vector index
-├── docs/
-│   ├── architecture.png            # architecture diagram
-│   ├── slides_en.pdf               # bootcamp final-project showcase presentation (EN)
-│   └── slides_pt.pdf               # bootcamp final-project showcase presentation (PT)
 ├── evals/reports/                  # eval outputs (JSON/CSV) + plots
 ├── notebooks/                      # profiling & exploration (sections, chunks, indexing)
 ├── pyproject.toml                  # project metadata + pinned direct dependencies (uv)
