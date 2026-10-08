@@ -4,7 +4,7 @@ A bilingual (Portuguese and English) **retrieval-augmented generation (RAG)** as
 
 The project is built end to end: PDF preprocessing, chunking, embedding and indexing, retrieval, grounded generation, a full evaluation suite (retrieval and generation), and a Streamlit chat UI.
 
-It was presented as the final project for the **Deep Learning with TensorFlow** bootcamp from EDIT.
+It was presented as the final project for the **EDIT. - Deep Learning with TensorFlow** bootcamp.
 
 ---
 
