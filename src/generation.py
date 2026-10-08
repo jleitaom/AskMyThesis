@@ -1,7 +1,8 @@
 """
 Answer questions about the thesis, grounded in retrieved chunks.
 
-Two interchangeable backends, selected by the LLM_BACKEND env var. Both run the SAME
+Two interchangeable backends, selected by generation.backend in the config (or the
+LLM_BACKEND env var, which overrides it). Both run the SAME
 model, so the local evaluation genuinely predicts production behaviour:
   - "ollama" (default) — local qwen2.5:7b via Ollama. Free, offline; this is what the
     evaluation scripts use so heavy RAGAS runs don't burn API quota.
@@ -26,6 +27,7 @@ from langchain_ollama import ChatOllama
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 from langchain_core.messages import SystemMessage, HumanMessage
 
+from config import CFG
 from retrieval import Retriever
 
 load_dotenv()   # pick up HUGGINGFACEHUB_API_TOKEN from .env for the "hf" backend
@@ -33,10 +35,12 @@ DetectorFactory.seed = 0   # make langdetect deterministic
 
 # CONFIGURATION --------------------------------------------------------------------------
 
-LLM_BACKEND = os.getenv("LLM_BACKEND", "ollama")   # "ollama" (local/eval) or "hf" (deploy)
-OLLAMA_MODEL = "qwen2.5:7b"              # ollama tag; use "qwen2.5:3b" if RAM is tight
-HF_MODEL = "Qwen/Qwen2.5-7B-Instruct"   # same model as OLLAMA_MODEL, on HF Inference
-MAX_NEW_TOKENS = 512
+# "ollama" (local/eval) or "hf" (deploy); the LLM_BACKEND env var overrides the config
+LLM_BACKEND = os.getenv("LLM_BACKEND", CFG["generation"]["backend"])
+OLLAMA_MODEL = CFG["generation"]["ollama_model"]
+HF_MODEL = CFG["generation"]["hf_model"]   # same model as OLLAMA_MODEL, on HF Inference
+MAX_NEW_TOKENS = CFG["generation"]["max_new_tokens"]
+TEMPERATURE = CFG["generation"]["temperature"]   # 0 = greedy
 
 SYSTEM_PROMPT = (
     "You are a question-answering assistant for a specific master's thesis. "
@@ -51,24 +55,27 @@ SYSTEM_PROMPT = (
 
 def _get_llm(backend=None):
     """
-    Build the chat model for the selected backend. Both are deterministic (greedy)
-    so eval runs are reproducible.
+    Build the chat model for the selected backend. With temperature 0 both are
+    deterministic (greedy) so eval runs are reproducible.
     """
     backend = backend or LLM_BACKEND
 
     if backend == "ollama":
         # Local, offline, free — used for evaluation.
-        return ChatOllama(model=OLLAMA_MODEL, temperature=0, num_predict=MAX_NEW_TOKENS)
+        return ChatOllama(model=OLLAMA_MODEL, temperature=TEMPERATURE, num_predict=MAX_NEW_TOKENS)
 
     if backend == "hf":
         # Same model on HF Inference Providers — used for deployment. ChatHuggingFace
         # wraps the raw endpoint so it accepts SystemMessage/HumanMessage lists.
+        # HF rejects temperature=0, so greedy is expressed as do_sample=False instead.
+        sampling = {"do_sample": True, "temperature": TEMPERATURE} if TEMPERATURE > 0 \
+            else {"do_sample": False}   # greedy -> deterministic, good for eval
         endpoint = HuggingFaceEndpoint(
             repo_id=HF_MODEL,
             task="text-generation",
             provider="auto",            # let HF route to an available provider
             max_new_tokens=MAX_NEW_TOKENS,
-            do_sample=False,            # greedy -> deterministic, good for eval
+            **sampling,
         )
         return ChatHuggingFace(llm=endpoint)
 
@@ -145,16 +152,17 @@ class Generator:
     """
     Retrieve + generate. Loads the retriever (with its local bge-m3) and the LLM client once; reuse across queries.
 
-    backend: "ollama" | "hf" | None (None -> LLM_BACKEND env, default "ollama").
+    backend: "ollama" | "hf" | None (None -> LLM_BACKEND env, else generation.backend).
     """
 
     def __init__(self, retriever=None, backend=None):
         self.retriever = retriever or Retriever()
         self.llm = _get_llm(backend)
 
-    def answer(self, query, k=5, search_type="similarity"):
+    def answer(self, query, k=None, search_type=None):
         """
-        Retrieve top-k chunks and generate an answer grounded in them.
+        Retrieve top-k chunks and generate an answer grounded in them. Unset k /
+        search_type fall back to the retrieval config.
         """
         hits = self.retriever.retrieve(query, k=k, search_type=search_type)
 

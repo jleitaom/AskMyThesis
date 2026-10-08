@@ -6,19 +6,20 @@ Embed chunks with bge-m3 and persist a Chroma collection.
 
 import json
 import shutil
-from pathlib import Path
 
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
+from config import CFG
+
 # CONFIGURATION --------------------------------------------------------------------------
 
-CHUNKS_PATH = Path("data/processed/chunks.json")
-CHROMA_DIR = Path("data/chroma")
-COLLECTION_NAME = "thesis"
-EMBEDDING_MODEL = "BAAI/bge-m3"
-CHUNK_SIZE = 500  # stamped into collection metadata for provenance
+CHUNKS_PATH = CFG["paths"]["chunks"]
+CHROMA_DIR = CFG["paths"]["chroma_dir"]
+COLLECTION_NAME = CFG["index"]["collection"]
+EMBEDDING_MODEL = CFG["embedding"]["model"]
+CHUNK_SIZE = CFG["chunking"]["chunk_size"]  # stamped into collection metadata for provenance
  
 # UTILITY FUNCTIONS -----------------------------------------------------------------------
 

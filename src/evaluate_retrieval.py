@@ -17,14 +17,15 @@ Metrics (averaged over answerable questions):
  
 import csv
 import json
-from pathlib import Path
 
+from config import CFG
 from retrieval import Retriever
- 
-GOLDEN_PATH = Path("data/golden/golden.json")
-REPORT_DIR = Path("evals/reports")
-K_VALUES = [1, 2, 3, 4, 5, 6, 7, 10]
-SEARCH_TYPES = ["similarity", "mmr"]
+
+GOLDEN_PATH = CFG["paths"]["golden"]
+REPORT_DIR = CFG["paths"]["reports_dir"]
+K_VALUES = CFG["eval"]["retrieval"]["k_values"]
+SEARCH_TYPES = CFG["eval"]["retrieval"]["search_types"]
+APP_K = CFG["retrieval"]["k"]   # pick the best search_type at the k the app uses
  
  
 def _is_relevant(chunk_number, labels):
@@ -147,10 +148,11 @@ def main():
     _print_table(results)
     _print_language_breakdown(per_lang, k=5, search_type="similarity")
  
-    # Best config by recall@5
-    best = max(((st, k) for (st, k) in results if k == 4),
-               key=lambda key: results[key]["recall"])
-    print(f"\nbest @k=4 by recall: {best[0]} (recall {results[best]['recall']:.3f})")
+    # Best search_type by recall at the app's k (skipped if that k isn't in the sweep)
+    candidates = [(st, k) for (st, k) in results if k == APP_K]
+    if candidates:
+        best = max(candidates, key=lambda key: results[key]["recall"])
+        print(f"\nbest @k={APP_K} by recall: {best[0]} (recall {results[best]['recall']:.3f})")
     
     # Save results to CSV for sharing/plotting.
     out = REPORT_DIR / "retrieval_eval.csv"

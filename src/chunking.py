@@ -5,18 +5,19 @@ Turn cleaned thesis sections into embeddable chunks.
 # IMPORTS ---------------------------------------------------------------------------------
 
 import json
-from pathlib import Path
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from transformers import AutoTokenizer
 
+from config import CFG
+
 # CONFIGURATION --------------------------------------------------------------------------
 
-CLEANED_SECTIONS_PATH = Path("data/processed/cleaned_sections.json")
-CHUNK_OUTPUT_PATH = Path("data/processed/chunks.json")
-EMBEDDING_MODEL = "BAAI/bge-m3"
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 75
+CLEANED_SECTIONS_PATH = CFG["paths"]["cleaned"]
+CHUNK_OUTPUT_PATH = CFG["paths"]["chunks"]
+EMBEDDING_MODEL = CFG["embedding"]["model"]
+CHUNK_SIZE = CFG["chunking"]["chunk_size"]
+CHUNK_OVERLAP = CFG["chunking"]["chunk_overlap"]
 
 # UTILITY FUNCTIONS -----------------------------------------------------------------------
 

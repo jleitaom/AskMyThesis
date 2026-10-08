@@ -2,6 +2,7 @@
 Streamlit chat UI for AskMyThesis.
 
     streamlit run app.py
+    streamlit run app.py -- --config path/to/config.yaml
 """
 
 # IMPORTS ---------------------------------------------------------------------------------
@@ -16,10 +17,6 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 from generation import Generator  # noqa: E402
 
-# CONFIGURATION --------------------------------------------------------------------------
-
-K = 4  # chunks to retrieve per question
-
 # APP -----------------------------------------------------------------------
 
 st.set_page_config(page_title="AskMyThesis", page_icon="📖")
@@ -30,7 +27,7 @@ def load_generator():
     """
     Build the Generator once per session and reuse it
     """
-    return Generator(backend="ollama")
+    return Generator()   # backend from LLM_BACKEND env, else generation.backend
 
 
 def render_sources(sources):
@@ -68,7 +65,7 @@ if query := st.chat_input("Ask about the thesis…"):
 
     with st.chat_message("assistant"):
         with st.spinner("Thinking…"):
-            result = generator.answer(query, k=K)
+            result = generator.answer(query)   # k / search_type from retrieval config
         st.markdown(result["answer"])
         if not result.get("error"):
             render_sources(result["sources"])

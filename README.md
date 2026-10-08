@@ -4,7 +4,7 @@ A bilingual (Portuguese and English) **retrieval-augmented generation (RAG)** as
 
 The project is built end to end: PDF preprocessing, chunking, embedding and indexing, retrieval, grounded generation, a full evaluation suite (retrieval and generation), and a Streamlit chat UI.
 
-It was presented as the final project for the **Deep Learning with TensorFlow** bootcamp.
+It was presented as the final project for the **Deep Learning with TensorFlow** bootcamp from EDIT.
 
 ---
 
@@ -44,7 +44,9 @@ It was presented as the final project for the **Deep Learning with TensorFlow** 
 ```
 AskMyThesis/
 ├── app.py                          # Streamlit chat UI
+├── config.yaml                     # run configuration (paths, models, chunking, retrieval, eval)
 ├── src/
+│   ├── config.py                   # loads config.yaml (or --config / ASKMYTHESIS_CONFIG)
 │   ├── preprocessing/
 │   │   ├── extract_text.py         # Stage 1: PDF → structured sections + metadata
 │   │   └── clean_text.py           # Stage 2: dehyphenate, reflow paragraphs, normalize
@@ -61,8 +63,8 @@ AskMyThesis/
 │   └── chroma/                     # persisted vector index
 ├── evals/reports/                  # eval outputs (JSON/CSV) + plots
 ├── notebooks/                      # profiling & exploration (sections, chunks, indexing)
-├── requirements.txt                # pinned direct dependencies
-├── requirements.lock.txt           # fully resolved lockfile
+├── pyproject.toml                  # project metadata + pinned direct dependencies (uv)
+├── uv.lock                         # fully resolved lockfile
 └── slides.pdf                      # bootcamp final-project showcase presentation
 ```
 
@@ -71,15 +73,14 @@ AskMyThesis/
 ## Setup
 
 **Prerequisites**
-- Python 3.10 or newer
+- [uv](https://docs.astral.sh/uv/) (installs Python 3.12 automatically, pinned in `.python-version`)
 - [Ollama](https://ollama.com/), for local generation and evaluation
 - A Hugging Face token, only for the hosted (`hf`) generation backend
 
 ```bash
-# 1. Create a virtual environment and install dependencies
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+# 1. Create the virtual environment (.venv) and install dependencies from uv.lock
+uv sync                       # add `--group notebooks` for the profiling notebooks
+source .venv/bin/activate     # or prefix commands with `uv run`
 
 # 2. Pull the models used locally (generation + eval judge)
 ollama pull qwen2.5:7b     # generation (qwen2.5:3b works if RAM is tight)
@@ -93,6 +94,30 @@ echo "HUGGINGFACEHUB_API_TOKEN=hf_xxx" > .env
 
 ---
 
+## Configuration
+
+Run settings live in [`config.yaml`](config.yaml), not in the scripts: file paths, PDF page range, embedding model, chunk size/overlap, retrieval `k` / search type, generation backend and models, and the evaluation sweep, judge and RAGAS settings. Every script reads it.
+
+To try a variant without editing the default, write a YAML file with only the keys you want to change and pass it with `--config`:
+
+```yaml
+# configs/quick.yaml
+eval:
+  generation:
+    sample: 5
+    use_cache: false
+```
+
+```bash
+python src/evaluate_generation.py --config configs/quick.yaml
+streamlit run app.py -- --config configs/quick.yaml     # note the extra `--`
+ASKMYTHESIS_CONFIG=configs/quick.yaml python src/chunking.py   # env var works too
+```
+
+Missing keys fall back to the defaults in `src/config.py`. Unknown keys raise an error, so a typo can't silently fall back to a default. Relative paths are resolved from the repo root. Prompts, text-cleaning rules and secrets are deliberately not configurable: prompts and cleaning rules are part of the evaluated method and stay in code, and secrets stay in `.env`.
+
+---
+
 ## Build the index
 
 The index is a deterministic function of the source PDF. Run the pipeline from the repo root:
@@ -100,8 +125,8 @@ The index is a deterministic function of the source PDF. Run the pipeline from t
 ```bash
 python src/preprocessing/extract_text.py   # thesis.pdf → extracted_sections.json
 python src/preprocessing/clean_text.py     # → cleaned_sections.json
-python src/chunking.py                      # → chunks.json  (recursive, ~500-token chunks)
-python src/indexing.py                      # → data/chroma/  (bge-m3 embeddings)
+python src/chunking.py                     # → chunks.json  (recursive, ~500-token chunks)
+python src/indexing.py                     # → data/chroma/  (bge-m3 embeddings)
 ```
 
 `indexing.py` wipes and rebuilds the Chroma collection on each run, stamping the embedding model and chunk size into the collection metadata. `retrieval.py` refuses to load an index built with a mismatched embedding model, so query and index can never silently diverge.
@@ -114,7 +139,7 @@ python src/indexing.py                      # → data/chroma/  (bge-m3 embeddin
 streamlit run app.py
 ```
 
-This opens a chat UI: ask in Portuguese or English, read the grounded answer, and expand **Sources** to see the cited thesis sections (with retrieval distances). The app retrieves the top 4 chunks per question. Retrieval runs locally; generation goes through the configured backend.
+This opens a chat UI: ask in Portuguese or English, read the grounded answer, and expand **Sources** to see the cited thesis sections (with retrieval distances). The app retrieves the top 4 chunks per question (`retrieval.k`). Retrieval runs locally; generation goes through the configured backend.
 
 Smoke tests without the UI:
 
@@ -127,7 +152,7 @@ python src/generation.py    # answers a couple of sample questions with citation
 
 ## Generation backends
 
-`generation.py` selects its LLM via the `LLM_BACKEND` environment variable:
+`generation.py` selects its LLM via `generation.backend` in the config, which the `LLM_BACKEND` environment variable overrides (handy for deployment):
 
 | `LLM_BACKEND` | Model | Use |
 |---------------|-------|-----|
@@ -191,7 +216,9 @@ Results:
 | Refusal, out_of_scope | **27 / 27 (100%)** |
 | Refusal, unanswerable_on_topic | **23 / 23 (100%)** |
 
-Outputs land in `evals/reports/` (`generation_eval.json`, `ragas_per_row.csv`, plots). `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the local 14B judge cannot emit reliably; it can be re-enabled in `RAGAS_METRICS` with a stronger hosted judge.
+Outputs land in `evals/reports/` (`generation_eval.json`, `ragas_per_row.csv`, plots). `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the local 14B judge cannot emit reliably; it can be re-enabled in `eval.generation.ragas_metrics` with a stronger hosted judge.
+
+> **Known limitation: judge from the same model family.** The judge (`qwen2.5:14b`) is from the same family as the generator (`qwen2.5:7b`), which I chose so that evaluation stays free and runs locally. LLM judges tend to rate text from their own model family more favourably (self-preference bias), so the judge-based scores above (refusal and RAGAS) may be somewhat optimistic. Scoring the same cached answers with a judge from a different family is a planned improvement. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
 
 ---
 

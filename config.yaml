@@ -1,0 +1,59 @@
+# AskMyThesis run configuration.
+#
+# Default for every script. To run a variant, copy this file (it only needs the keys
+# you change) and pass it with --config, e.g.
+#   uv run python src/evaluate_generation.py --config configs/quick.yaml
+#   uv run streamlit run app.py -- --config configs/quick.yaml
+# or set ASKMYTHESIS_CONFIG=path/to/file.yaml.
+
+paths:                          # relative to the repo root
+  pdf: data/raw/thesis.pdf
+  extracted: data/processed/extracted_sections.json
+  cleaned: data/processed/cleaned_sections.json
+  chunks: data/processed/chunks.json
+  chroma_dir: data/chroma
+  golden: data/golden/golden.json
+  reports_dir: evals/reports
+
+extraction:
+  page_start: 20                # first PDF page of the body (front matter is injected separately)
+  page_end: 137
+
+embedding:
+  model: BAAI/bge-m3            # used for token counts (chunking), indexing and retrieval
+
+chunking:
+  chunk_size: 500               # tokens
+  chunk_overlap: 75
+
+index:
+  collection: thesis
+
+retrieval:                      # used by the app and Generator.answer()
+  k: 4
+  search_type: similarity       # similarity | mmr
+  fetch_k: 20                   # MMR candidate pool
+
+generation:
+  backend: ollama               # ollama (local/eval) | hf (deploy); env LLM_BACKEND overrides
+  ollama_model: qwen2.5:7b
+  hf_model: Qwen/Qwen2.5-7B-Instruct
+  max_new_tokens: 512
+  temperature: 0
+
+eval:
+  retrieval:
+    k_values: [1, 2, 3, 4, 5, 6, 7, 10]
+    search_types: [similarity, mmr]
+  generation:
+    k: 5                        # chunks retrieved per question. Not part of the answer-cache [signature: set use_cache false after changing it]
+    judge_model: qwen2.5:14b    # local Ollama judge
+    judge_num_predict: 4096     # RAGAS claim-decomposition JSON is long (esp. in PT)
+    use_cache: true             # reuse cached answers when model + prompt are unchanged
+    sample: null                # e.g. 5 to only run the first few questions
+    ragas_sample: null          # cap how many answerable answers RAGAS scores (null = all)
+    ragas_max_workers: 2        # Ollama is serial; more workers just time out
+    ragas_timeout: 600          # seconds per metric job
+    # Available: faithfulness, answer_relevancy, factual_correctness, semantic_similarity.
+    # factual_correctness is off: the local 14B judge can't produce its strict JSON reliably.
+    ragas_metrics: [faithfulness, answer_relevancy, semantic_similarity]

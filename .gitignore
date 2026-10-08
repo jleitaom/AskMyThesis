@@ -1,4 +1,4 @@
-venv/
+.venv/
 
 .env
 
@@ -6,10 +6,4 @@ venv/
 
 __pycache__/
 
-notes.txt
-
-requirements.lock.txt
-
-notebooks/clean_text.ipynb
-notebooks/extract_text.ipynb
-notebooks/indexing.ipynb
+notebooks/*.ipynb

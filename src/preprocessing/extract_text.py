@@ -13,18 +13,20 @@ Output: extracted_sections.json
 
 import json
 import re
+import sys
 import pdfplumber
 from pathlib import Path
 
-
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # src/, for config
+from config import CFG  # noqa: E402
 
 # CONFIGURATION --------------------------------------------------------------------------
 
-PDF_PATH = Path("data/raw/thesis.pdf")
-OUTPUT_PATH = Path("data/processed/extracted_sections.json")
+PDF_PATH = CFG["paths"]["pdf"]
+OUTPUT_PATH = CFG["paths"]["extracted"]
 
-PDF_PAGE_START = 20 # 14
-PDF_PAGE_END = 137  # 137
+PDF_PAGE_START = CFG["extraction"]["page_start"]
+PDF_PAGE_END = CFG["extraction"]["page_end"]
 
 # METADATA INJECTION  --------------------------------------------------------------------------
 

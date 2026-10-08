@@ -16,15 +16,17 @@ Output: cleaned_sections.json
 
 import json
 import re
+import sys
 from pathlib import Path
 import unicodedata
 
-
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # src/, for config
+from config import CFG  # noqa: E402
 
 # CONFIGURATION --------------------------------------------------------------------------
 
-INPUT_PATH = Path("data/processed/extracted_sections.json")
-OUTPUT_PATH = Path("data/processed/cleaned_sections.json")
+INPUT_PATH = CFG["paths"]["extracted"]
+OUTPUT_PATH = CFG["paths"]["cleaned"]
 
 
 

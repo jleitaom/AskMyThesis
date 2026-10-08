@@ -4,16 +4,19 @@ Query the persisted Chroma index.
 
 # IMPORTS ---------------------------------------------------------------------------------
 
-from pathlib import Path
-
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
+from config import CFG
+
 # CONFIGURATION --------------------------------------------------------------------------
 
-CHROMA_DIR = Path("data/chroma")
-COLLECTION_NAME = "thesis"
-EMBEDDING_MODEL = "BAAI/bge-m3"
+CHROMA_DIR = CFG["paths"]["chroma_dir"]
+COLLECTION_NAME = CFG["index"]["collection"]
+EMBEDDING_MODEL = CFG["embedding"]["model"]
+K = CFG["retrieval"]["k"]
+SEARCH_TYPE = CFG["retrieval"]["search_type"]
+FETCH_K = CFG["retrieval"]["fetch_k"]
  
 # UTILITY FUNCTIONS -----------------------------------------------------------------------
 
@@ -44,7 +47,7 @@ def _load_store(embeddings, model=EMBEDDING_MODEL):
     if stamped and stamped != model:
         raise RuntimeError(
             f"Embedding model mismatch: index built with {stamped!r} but querying "
-            f"With {model!r}. Rebuild the index or set EMBEDDING_MODEL to match."
+            f"With {model!r}. Rebuild the index or set embedding.model in the config to match."
         )
     
     return store
@@ -66,14 +69,18 @@ class Retriever:
         self.embeddings = _get_embeddings(embedding_model)
         self.store = _load_store(self.embeddings, embedding_model)
  
-    def retrieve(self, query, k=5, search_type="similarity", fetch_k=20):
+    def retrieve(self, query, k=None, search_type=None, fetch_k=None):
         """
-        Return the top-k chunks as dicts.
- 
+        Return the top-k chunks as dicts. Unset arguments fall back to the config.
+
         search_type:
           "similarity" — plain cosine top-k, includes a distance score.
           "mmr"        — Maximal Marginal Relevance
         """
+        k = k or K
+        search_type = search_type or SEARCH_TYPE
+        fetch_k = fetch_k or FETCH_K
+
         if search_type == "similarity":
             pairs = self.store.similarity_search_with_score(query, k=k)
             return [_format(doc, float(score)) for doc, score in pairs]

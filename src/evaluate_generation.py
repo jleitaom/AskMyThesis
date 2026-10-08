@@ -14,20 +14,20 @@ Retrieval is covered by evaluate_retrieval.py; this grades generation. All local
      unanswerable_on_topic, which is why check 1 exists.
   3. RAGAS on the 70 answerable questions — faithfulness + answer_relevancy (vs the
      retrieved context) and semantic_similarity vs the golden reference_answer.
-     factual_correctness is available but disabled by default; see RAGAS_METRICS.
+     factual_correctness is available but disabled by default; see eval.generation.ragas_metrics.
  
 Generated answers are cached to REPORT_DIR/answers_cache.json, keyed by question and
 tagged with a signature of the generation setup (model + system prompt). Re-runs reuse
 the cache and skip the slow generation step; if the signature changes (you switch model
-or edit the prompt) the cache is discarded and answers regenerate. Set USE_CACHE=False
-to force regeneration. Drop SAMPLE to a small number while developing.
+or edit the prompt) the cache is discarded and answers regenerate. Set
+eval.generation.use_cache to false in the config to force regeneration, and
+eval.generation.sample to a small number while developing.
 """
  
 import csv
 import hashlib
 import json
 import statistics
-from pathlib import Path
 from langchain_ollama import ChatOllama
 from langchain_core.messages import SystemMessage, HumanMessage
 import warnings
@@ -38,38 +38,39 @@ from ragas import EvaluationDataset, evaluate, RunConfig
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
  
+from config import CFG
 from generation import Generator, SYSTEM_PROMPT
 
-GOLDEN_PATH = Path("data/golden/golden.json")
-REPORT_DIR = Path("evals/reports")
+EVAL_CFG = CFG["eval"]["generation"]
+
+GOLDEN_PATH = CFG["paths"]["golden"]
+REPORT_DIR = CFG["paths"]["reports_dir"]
 ANSWERS_CACHE = REPORT_DIR / "answers_cache.json"
-USE_CACHE = True                # reuse cached answers when the generation signature matches
- 
-JUDGE_MODEL = "qwen2.5:14b"      # local Ollama judge, same family as generation
-JUDGE_NUM_PREDICT = 4096         # RAGAS claim-decomposition JSON is long (esp. in PT);
-                                 # 1024 truncated it mid-object and broke the parser.
+USE_CACHE = EVAL_CFG["use_cache"]   # reuse cached answers when the generation signature matches
+K = EVAL_CFG["k"]                   # chunks retrieved per question
+
+JUDGE_MODEL = EVAL_CFG["judge_model"]              # local Ollama judge
+JUDGE_NUM_PREDICT = EVAL_CFG["judge_num_predict"]  # RAGAS claim-decomposition JSON is long
+                                                   # (esp. in PT); 1024 truncated it
+                                                   # mid-object and broke the parser.
 NEGATIVE_TYPES = ("out_of_scope", "unanswerable_on_topic")
-SAMPLE = None                     # set to e.g. 5 to only run the first few questions
+SAMPLE = EVAL_CFG["sample"]         # e.g. 5 to only run the first few questions
 
 # Ollama processes requests serially, so high RAGAS concurrency just makes jobs
 # queue and time out (that's what produced the nan faithfulness). Keep workers
 # low and the per-job timeout high. Drop workers to 1 if you still see timeouts.
-RAGAS_MAX_WORKERS = 2
-RAGAS_TIMEOUT = 600             # seconds per metric job (faithfulness is the slow one)
-RAGAS_SAMPLE = None             # cap how many answerable answers RAGAS scores (None = all);
-                                # each answer x metric is a slow local-judge job, so a
-                                # subset (e.g. 25) keeps the run to ~1h without losing signal.
- 
-# Comment a line to skip that metric. semantic_similarity needs reference_answer.
-# factual_correctness is disabled: its claim_decomposition step needs strict JSON the
-# local 14B judge can't produce reliably (RagasOutputParserException, even with a large
-# num_predict). Re-enable it if you switch to a stronger judge (e.g. a hosted GPT-4-class).
-RAGAS_METRICS = [
-    "faithfulness",
-    "answer_relevancy",
-    # "factual_correctness",
-    "semantic_similarity",
-]
+RAGAS_MAX_WORKERS = EVAL_CFG["ragas_max_workers"]
+RAGAS_TIMEOUT = EVAL_CFG["ragas_timeout"]   # seconds per metric job (faithfulness is slowest)
+RAGAS_SAMPLE = EVAL_CFG["ragas_sample"]     # cap how many answerable answers RAGAS scores
+                                            # (None = all); each answer x metric is a slow
+                                            # local-judge job, so a subset (e.g. 25) keeps
+                                            # the run to ~1h without losing signal.
+
+# semantic_similarity needs reference_answer. factual_correctness is disabled in the
+# default config: its claim_decomposition step needs strict JSON the local 14B judge
+# can't produce reliably (RagasOutputParserException, even with a large num_predict).
+# Re-enable it if you switch to a stronger judge (e.g. a hosted GPT-4-class).
+RAGAS_METRICS = EVAL_CFG["ragas_metrics"]
  
 REFUSAL_SYSTEM = (
     "You decide whether an assistant DECLINED to answer a question. It was told to "
@@ -123,7 +124,7 @@ def generate_answers(generator, golden, cache_path=ANSWERS_CACHE, use_cache=USE_
             result = cached
         else:
             print(f"Generating answer {i}/{len(golden)}...")
-            result = generator.answer(q)
+            result = generator.answer(q, k=K)
             answers[q] = {"answer": result["answer"], "error": result.get("error"),
                           "sources": result.get("sources", [])}
             generated += 1
