@@ -9,3 +9,4 @@ __pycache__/
 notebooks/*.ipynb
 
 docs/*.pdf
+docs/IMPROVEMENTS.md
