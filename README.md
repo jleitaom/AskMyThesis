@@ -61,11 +61,12 @@ AskMyThesis/
 │   ├── processed/                  # extracted_sections / cleaned_sections / chunks (JSON)
 │   ├── golden/golden.json          # hand-built eval set
 │   └── chroma/                     # persisted vector index
+├── docs/
+│   └── slides_pt.pdf               # bootcamp final-project showcase presentation (PT)
 ├── evals/reports/                  # eval outputs (JSON/CSV) + plots
 ├── notebooks/                      # profiling & exploration (sections, chunks, indexing)
 ├── pyproject.toml                  # project metadata + pinned direct dependencies (uv)
-├── uv.lock                         # fully resolved lockfile
-└── slides.pdf                      # bootcamp final-project showcase presentation
+└── uv.lock                         # fully resolved lockfile
 ```
 
 ---

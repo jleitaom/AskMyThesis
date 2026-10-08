@@ -8,4 +8,4 @@ __pycache__/
 
 notebooks/*.ipynb
 
-IMPROVEMENTS.md
+docs/IMPROVEMENTS.md
