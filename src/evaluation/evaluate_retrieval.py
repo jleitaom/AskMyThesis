@@ -17,12 +17,15 @@ Metrics (averaged over answerable questions):
  
 import csv
 import json
+import sys
+from pathlib import Path
 
-from config import CFG
-from retrieval import Retriever
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # src/, for config + retrieval
+from config import CFG  # noqa: E402
+from retrieval import Retriever  # noqa: E402
 
 GOLDEN_PATH = CFG["paths"]["golden"]
-REPORT_DIR = CFG["paths"]["reports_dir"]
+REPORT_DIR = CFG["paths"]["retrieval_reports"]
 K_VALUES = CFG["eval"]["retrieval"]["k_values"]
 SEARCH_TYPES = CFG["eval"]["retrieval"]["search_types"]
 APP_K = CFG["retrieval"]["k"]   # pick the best search_type at the k the app uses

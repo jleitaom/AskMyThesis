@@ -58,15 +58,18 @@ AskMyThesis/
 │   ├── indexing.py                 # Stage 4: embed chunks (bge-m3) → persisted Chroma index
 │   ├── retrieval.py                # Query the index (similarity / MMR), returns scored dicts
 │   ├── generation.py               # Retrieve → grounded prompt → LLM (ollama | hf backend)
-│   ├── evaluate_retrieval.py       # recall@k / hit@k / MRR vs the golden set
-│   └── evaluate_generation.py      # RAGAS + refusal + distance-by-type checks
+│   └── evaluation/
+│       ├── evaluate_retrieval.py   # recall@k / hit@k / MRR vs the golden set
+│       └── evaluate_generation.py  # RAGAS + refusal + distance-by-type checks
 ├── assets/architecture.png         # architecture diagram
 ├── data/
 │   ├── raw/thesis.pdf              # source document
 │   ├── processed/                  # extracted_sections / cleaned_sections / chunks (JSON)
 │   ├── golden/golden.json          # hand-built eval set
 │   └── chroma/                     # persisted vector index
-├── evals/reports/                  # eval outputs (JSON/CSV) + plots
+├── evals/
+│   ├── retrieval/                  # retrieval results (CSV) + charts
+│   └── generation/                 # generation results (JSON/CSV), answer cache + charts
 ├── notebooks/                      # profiling & exploration (sections, chunks, indexing)
 ├── pyproject.toml                  # project metadata + pinned direct dependencies (uv)
 └── uv.lock                         # fully resolved lockfile
@@ -113,7 +116,7 @@ eval:
 ```
 
 ```bash
-python src/evaluate_generation.py --config configs/quick.yaml
+python src/evaluation/evaluate_generation.py --config configs/quick.yaml
 streamlit run app.py -- --config configs/quick.yaml     # note the extra `--`
 ASKMYTHESIS_CONFIG=configs/quick.yaml python src/chunking.py   # env var works too
 ```
@@ -180,7 +183,7 @@ Everything is scored against `data/golden/golden.json`, a hand-built set of **12
 ### Retrieval
 
 ```bash
-python src/evaluate_retrieval.py
+python src/evaluation/evaluate_retrieval.py
 ```
 
 Sweeps `k` and search type (similarity vs MMR), reporting recall@k, hit@k, and MRR with a per-language breakdown. Entirely local, no LLM and no API cost. It uses section-prefix matching, so a `2.3.1` chunk credits a `2.3` label.
@@ -199,7 +202,7 @@ Similarity beats MMR at every k on this corpus, and retrieval is near-saturated 
 ### Generation
 
 ```bash
-python src/evaluate_generation.py
+python src/evaluation/evaluate_generation.py
 ```
 
 Runs three checks, all local (`gemma3:12b` judge on Ollama, and bge-m3):
@@ -208,7 +211,7 @@ Runs three checks, all local (`gemma3:12b` judge on Ollama, and bge-m3):
 2. **Retrieval distance by type**: shows that a distance cutoff could screen `out_of_scope` but not `unanswerable_on_topic`, which is why check 1 exists.
 3. **RAGAS** on the answerable questions: faithfulness and answer relevancy (vs retrieved context) and semantic similarity (vs the reference answer).
 
-Answers are cached to `evals/reports/answers_cache.json`, keyed by a signature of the model and system prompt, and the cache auto-invalidates when either changes. A full run takes about 2.5 hours, mostly RAGAS on the local judge.
+Answers are cached to `evals/generation/answers_cache.json`, keyed by a signature of the model and system prompt, and the cache auto-invalidates when either changes. A full run takes about 2.5 hours, mostly RAGAS on the local judge.
 
 Results (judge `gemma3:12b`):
 
@@ -220,9 +223,9 @@ Results (judge `gemma3:12b`):
 | Refusal, out_of_scope | **27 / 27 (100%)** |
 | Refusal, unanswerable_on_topic | **23 / 23 (100%)** |
 
-![Generation results: faithfulness 0.97, answer relevancy 0.83, semantic similarity 0.83, refusal rate 1.00, alongside best retrieval distance by question type](evals/reports/generation_eval.png)
+![Generation results: faithfulness 0.97, answer relevancy 0.83, semantic similarity 0.83, refusal rate 1.00, alongside best retrieval distance by question type](evals/generation/generation_eval.png)
 
-Outputs land in `evals/reports/` (`generation_eval.json`, `ragas_per_row.csv`, plots). `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the earlier `qwen2.5:14b` judge could not emit reliably. It has not been retried with `gemma3:12b`, and can be re-enabled in `eval.generation.ragas_metrics`.
+Outputs land in `evals/generation/` (`generation_eval.json`, `ragas_per_row.csv`, plots). `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the earlier `qwen2.5:14b` judge could not emit reliably. It has not been retried with `gemma3:12b`, and can be re-enabled in `eval.generation.ragas_metrics`.
 
 **Why a judge from a different family.** LLM judges tend to rate text from their own model family more favourably (self-preference bias). [Pombal et al. (2026)](https://arxiv.org/abs/2604.06996) show this holds even for binary yes/no verdicts on objective criteria. The first judge, `qwen2.5:14b`, was from the same family as the generator (`qwen2.5:7b`), so I re-scored the same cached answers with Google's `gemma3:12b` and made it the default judge. It scored them no lower (faithfulness 0.95 → 0.97, answer relevancy 0.82 → 0.83, refusal 100% under both), so the earlier results were not inflated by self-preference. The two judges agreed on the averages but only moderately on individual answers, so a single answer's score depends on the judge. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
 

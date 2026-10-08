@@ -34,7 +34,8 @@ DEFAULTS = {
         "chunks": "data/processed/chunks.json",
         "chroma_dir": "data/chroma",
         "golden": "data/golden/golden.json",
-        "reports_dir": "evals/reports",
+        "retrieval_reports": "evals/retrieval",
+        "generation_reports": "evals/generation",
     },
     "extraction": {
         "page_start": 20,

@@ -16,7 +16,7 @@ Retrieval is covered by evaluate_retrieval.py; this grades generation. All local
      retrieved context) and semantic_similarity vs the golden reference_answer.
      factual_correctness is available but disabled by default; see eval.generation.ragas_metrics.
  
-Generated answers are cached to REPORT_DIR/answers_cache.json, keyed by question and
+Generated answers are cached to REPORT_DIR/answers_cache.json (evals/generation/), keyed by question and
 tagged with a signature of the generation setup (model + system prompt). Re-runs reuse
 the cache and skip the slow generation step; if the signature changes (you switch model
 or edit the prompt) the cache is discarded and answers regenerate. Set
@@ -28,6 +28,8 @@ import csv
 import hashlib
 import json
 import statistics
+import sys
+from pathlib import Path
 from langchain_ollama import ChatOllama
 from langchain_core.messages import SystemMessage, HumanMessage
 import warnings
@@ -37,14 +39,15 @@ with warnings.catch_warnings():
 from ragas import EvaluationDataset, evaluate, RunConfig
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
- 
-from config import CFG
-from generation import Generator, SYSTEM_PROMPT
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # src/, for config + generation
+from config import CFG  # noqa: E402
+from generation import Generator, SYSTEM_PROMPT  # noqa: E402
 
 EVAL_CFG = CFG["eval"]["generation"]
 
 GOLDEN_PATH = CFG["paths"]["golden"]
-REPORT_DIR = CFG["paths"]["reports_dir"]
+REPORT_DIR = CFG["paths"]["generation_reports"]
 ANSWERS_CACHE = REPORT_DIR / "answers_cache.json"
 USE_CACHE = EVAL_CFG["use_cache"]   # reuse cached answers when the generation signature matches
 K = EVAL_CFG["k"]                   # chunks retrieved per question

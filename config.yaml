@@ -2,7 +2,7 @@
 #
 # Default for every script. To run a variant, copy this file (it only needs the keys
 # you change) and pass it with --config, e.g.
-#   uv run python src/evaluate_generation.py --config configs/quick.yaml
+#   uv run python src/evaluation/evaluate_generation.py --config configs/quick.yaml
 #   uv run streamlit run app.py -- --config configs/quick.yaml
 # or set ASKMYTHESIS_CONFIG=path/to/file.yaml.
 
@@ -13,7 +13,8 @@ paths:                          # relative to the repo root
   chunks: data/processed/chunks.json
   chroma_dir: data/chroma
   golden: data/golden/golden.json
-  reports_dir: evals/reports
+  retrieval_reports: evals/retrieval     # evaluate_retrieval.py outputs + charts
+  generation_reports: evals/generation   # evaluate_generation.py outputs, answer cache + charts
 
 extraction:
   page_start: 20                # first PDF page of the body (front matter is injected separately)
