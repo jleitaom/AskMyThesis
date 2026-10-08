@@ -19,6 +19,10 @@ It was presented as the final project for the **Deep Learning with TensorFlow** 
 
 ## Architecture
 
+![AskMyThesis architecture: preprocessing and indexing (PDF → preprocessing → chunking → bge-m3 embeddings → Chroma vector database), then retrieval and generation (PT/EN query → bge-m3 → Chroma → retrieval → Qwen2.5-7B → answer), with the retrieval and generation half covered by evaluation](docs/architecture.png)
+
+The same flow, mapped to the scripts:
+
 ```
                         PREPROCESSING (offline, one-time)
   thesis.pdf ──► extract_text.py ──► clean_text.py ──► chunking.py ──► indexing.py
@@ -62,6 +66,8 @@ AskMyThesis/
 │   ├── golden/golden.json          # hand-built eval set
 │   └── chroma/                     # persisted vector index
 ├── docs/
+│   ├── architecture.png            # architecture diagram
+│   ├── slides_en.pdf               # bootcamp final-project showcase presentation (EN)
 │   └── slides_pt.pdf               # bootcamp final-project showcase presentation (PT)
 ├── evals/reports/                  # eval outputs (JSON/CSV) + plots
 ├── notebooks/                      # profiling & exploration (sections, chunks, indexing)
