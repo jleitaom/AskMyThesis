@@ -60,7 +60,8 @@ AskMyThesis/
 │   ├── generation.py               # Retrieve → grounded prompt → LLM (ollama | hf backend)
 │   └── evaluation/
 │       ├── evaluate_retrieval.py   # recall@k / hit@k / MRR vs the golden set
-│       └── evaluate_generation.py  # RAGAS + refusal + distance-by-type checks
+│       ├── evaluate_generation.py  # RAGAS + refusal + distance-by-type checks
+│       └── plot_evals.py           # draws all eval charts from the saved reports
 ├── assets/architecture.png         # architecture diagram
 ├── data/
 │   ├── raw/thesis.pdf              # source document
@@ -186,7 +187,7 @@ Everything is scored against `data/golden/golden.json`, a hand-built set of **12
 python src/evaluation/evaluate_retrieval.py
 ```
 
-Sweeps `k` and search type (similarity vs MMR), reporting recall@k, hit@k, and MRR with a per-language breakdown. Entirely local, no LLM and no API cost. It uses section-prefix matching, so a `2.3.1` chunk credits a `2.3` label.
+Sweeps `k` and search type (similarity vs MMR), reporting recall@k, hit@k, and MRR with a per-language breakdown, saved with its charts to `evals/retrieval/` (`retrieval_eval.csv`, `retrieval_eval_by_lang.csv`). Entirely local, no LLM and no API cost. It uses section-prefix matching, so a `2.3.1` chunk credits a `2.3` label.
 
 Results (similarity):
 
@@ -197,7 +198,9 @@ Results (similarity):
 | **5** | **0.99** | **0.99** | **0.88** |
 | 10 | 1.00 | 1.00 | 0.89 |
 
-Similarity beats MMR at every k on this corpus, and retrieval is near-saturated by k=5.
+Similarity beats MMR at every k above 1 (they tie at k=1) on this corpus, and retrieval is near-saturated by k=5.
+
+![Retrieval quality vs k: recall@k and MRR@k for similarity and MMR search, with the app's k=4 marked](evals/retrieval/retrieval_eval.png)
 
 ### Generation
 
@@ -225,7 +228,7 @@ Results (judge `gemma3:12b`):
 
 ![Generation results: faithfulness 0.97, answer relevancy 0.83, semantic similarity 0.83, refusal rate 1.00, alongside best retrieval distance by question type](evals/generation/generation_eval.png)
 
-Outputs land in `evals/generation/` (`generation_eval.json`, `ragas_per_row.csv`, plots). `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the earlier `qwen2.5:14b` judge could not emit reliably. It has not been retried with `gemma3:12b`, and can be re-enabled in `eval.generation.ragas_metrics`.
+Outputs land in `evals/generation/` (`generation_eval.json`, `ragas_per_row.csv`, charts). Redraw all the charts (retrieval and generation) from the saved reports in seconds, without loading any model, with `uv run --group notebooks python src/evaluation/plot_evals.py`. `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the earlier `qwen2.5:14b` judge could not emit reliably. It has not been retried with `gemma3:12b`, and can be re-enabled in `eval.generation.ragas_metrics`.
 
 **Why a judge from a different family.** LLM judges tend to rate text from their own model family more favourably (self-preference bias). [Pombal et al. (2026)](https://arxiv.org/abs/2604.06996) show this holds even for binary yes/no verdicts on objective criteria. The first judge, `qwen2.5:14b`, was from the same family as the generator (`qwen2.5:7b`), so I re-scored the same cached answers with Google's `gemma3:12b` and made it the default judge. It scored them no lower (faithfulness 0.95 → 0.97, answer relevancy 0.82 → 0.83, refusal 100% under both), so the earlier results were not inflated by self-preference. The two judges agreed on the averages but only moderately on individual answers, so a single answer's score depends on the judge. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
 

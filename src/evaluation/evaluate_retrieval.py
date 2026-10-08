@@ -139,7 +139,22 @@ def _save_csv(results, path):
         w.writerow(["search_type", "k", "n", "hit@k", "recall@k", "MRR"])
         for (st, k), m in results.items():
             w.writerow([st, k, m["n"], f"{m['hit']:.4f}", f"{m['recall']:.4f}", f"{m['mrr']:.4f}"])
- 
+
+
+def _save_lang_csv(per_lang, path):
+    """
+    Save the per-language breakdown (every search_type and k) for plotting.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["search_type", "language", "k", "n", "hit@k", "recall@k", "MRR"])
+        for (st, k, lang), v in sorted(per_lang.items()):
+            n = len(v["hit"])
+            w.writerow([st, lang, k, n, f"{sum(v['hit'])/n:.4f}",
+                        f"{sum(v['recall'])/n:.4f}", f"{sum(v['mrr'])/n:.4f}"])
+
  
 def main():
     # Load the golden set and evaluate the retriever.
@@ -160,7 +175,9 @@ def main():
     # Save results to CSV for sharing/plotting.
     out = REPORT_DIR / "retrieval_eval.csv"
     _save_csv(results, out)
-    print(f"\nsaved -> {out}")
+    out_lang = REPORT_DIR / "retrieval_eval_by_lang.csv"
+    _save_lang_csv(per_lang, out_lang)
+    print(f"\nsaved -> {out}, {out_lang.name}")
  
  
 if __name__ == "__main__":
