@@ -225,10 +225,23 @@ Results:
 
 Outputs land in `evals/reports/` (`generation_eval.json`, `ragas_per_row.csv`, plots). `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the local 14B judge cannot emit reliably; it can be re-enabled in `eval.generation.ragas_metrics` with a stronger hosted judge.
 
-> **Known limitation: judge from the same model family.** The judge (`qwen2.5:14b`) is from the same family as the generator (`qwen2.5:7b`), which I chose so that evaluation stays free and runs locally. LLM judges tend to rate text from their own model family more favourably (self-preference bias), so the judge-based scores above (refusal and RAGAS) may be somewhat optimistic. Scoring the same cached answers with a judge from a different family is a planned improvement. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
+> **Known limitation: judge from the same model family.** The judge (`qwen2.5:14b`) is from the same family as the generator (`qwen2.5:7b`), which I chose so that evaluation stays free and runs locally. LLM judges tend to rate text from their own model family more favourably (self-preference bias). [Pombal et al. (2026)](https://arxiv.org/abs/2604.06996) show this holds even for binary yes/no verdicts on objective criteria, and that ensembling judges from different families reduces it without eliminating it. The judge-based scores above (refusal and RAGAS) may therefore be somewhat optimistic. Scoring the same cached answers with a judge from a different family is a planned improvement. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
 
 ---
 
 ## How grounding works
 
 The system prompt binds the model to a few rules: answer only from the provided context, decline briefly when the context does not cover the question, and reply in the question's language. Because a Portuguese context pulls a small model toward answering in Portuguese even for English questions, the reply language is detected deterministically (`langdetect`) and forced via a directive placed right next to the question, rather than trusting the model to pick it.
+
+---
+
+## What I learned
+
+- **Build the evaluation set before tuning anything.** The hand-built golden set showed that retrieval was nearly saturated by k=5, so further effort belonged in generation, not in more retrieval tweaks.
+- **Negative questions matter as much as answerable ones.** A retrieval-distance cutoff screens off-topic questions but not on-topic ones the thesis never answers. Only an explicit `unanswerable_on_topic` set shows whether the model hallucinates.
+- **Don't trust a small model with what code can do deterministically.** The 7B model drifted into Portuguese on English questions and declined in English by default, so the reply language is now detected in code and forced in the prompt.
+- **A RAG system only knows what is in its chunks.** The assistant could not say who wrote the thesis until I added a synthetic front-matter section with the title, author and supervisors.
+- **Simpler can win.** Plain similarity search beat MMR at every k on this corpus.
+- **The judge is part of the measurement.** The local 14B judge could not reliably produce the strict JSON that `factual_correctness` needs, small RAGAS differences (under about 0.02) are judge noise, and a judge from the generator's own family is likely to score it optimistically.
+- **Evaluate what you ship.** Running the same model locally for evaluation and hosted for deployment keeps the evaluation results meaningful for production.
+- **Make results reproducible and stale state impossible.** A lockfile, one config file, an answer cache keyed by model and prompt, and an index stamped with its embedding model mean old results or a mismatched index can't slip through unnoticed.
