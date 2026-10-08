@@ -1,4 +1,5 @@
 {
+  "judge": "gemma3:12b",
   "refusal": {
     "out_of_scope": {
       "n": 27,
@@ -35,8 +36,8 @@
     }
   },
   "ragas": {
-    "faithfulness": 0.9493150684931506,
-    "answer_relevancy": 0.8167698567116034,
-    "semantic_similarity": 0.825111153356092
+    "faithfulness": 0.9735812133072409,
+    "answer_relevancy": 0.8308523187935591,
+    "semantic_similarity": 0.8251111284794258
   }
 }

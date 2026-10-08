@@ -69,7 +69,7 @@ DEFAULTS = {
         },
         "generation": {
             "k": 5,
-            "judge_model": "qwen2.5:14b",
+            "judge_model": "gemma3:12b",
             "judge_num_predict": 4096,
             "use_cache": True,
             "sample": None,

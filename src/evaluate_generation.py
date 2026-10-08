@@ -67,8 +67,9 @@ RAGAS_SAMPLE = EVAL_CFG["ragas_sample"]     # cap how many answerable answers RA
                                             # the run to ~1h without losing signal.
 
 # semantic_similarity needs reference_answer. factual_correctness is disabled in the
-# default config: its claim_decomposition step needs strict JSON the local 14B judge
-# can't produce reliably (RagasOutputParserException, even with a large num_predict).
+# default config: its claim_decomposition step needs strict JSON that qwen2.5:14b (the
+# previous judge) couldn't produce reliably (RagasOutputParserException, even with a large
+# num_predict). Not yet retried with gemma3:12b.
 # Re-enable it if you switch to a stronger judge (e.g. a hosted GPT-4-class).
 RAGAS_METRICS = EVAL_CFG["ragas_metrics"]
  
@@ -299,7 +300,7 @@ def _safe_mean(series):
  
 def save_report(refusal, stats, df):
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
-    summary = {"refusal": refusal, "distance": stats}
+    summary = {"judge": JUDGE_MODEL, "refusal": refusal, "distance": stats}
     if df is not None:
         present = [name for name in RAGAS_METRICS if name in df.columns]
         summary["ragas"] = {name: _safe_mean(df[name]) for name in present}

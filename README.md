@@ -39,7 +39,7 @@ The same flow, mapped to the scripts:
 |-------|-----------|--------|
 | Embeddings / retrieval | `bge-m3` (BAAI) in a persisted **Chroma** collection, cosine distance | Strong multilingual embeddings for a PT/EN corpus |
 | Generation | **Qwen2.5-7B-Instruct** | Runs locally as `qwen2.5:7b` (Ollama) and hosted as `Qwen/Qwen2.5-7B-Instruct` (HF), the same model on both sides |
-| Eval judge | `qwen2.5:14b` (local Ollama) | Free, deterministic, same model family |
+| Eval judge | `gemma3:12b` (local Ollama) | Free and deterministic, and from a different model family than the generator, which avoids self-preference bias |
 
 ---
 
@@ -88,7 +88,7 @@ source .venv/bin/activate     # or prefix commands with `uv run`
 
 # 2. Pull the models used locally (generation + eval judge)
 ollama pull qwen2.5:7b     # generation (qwen2.5:3b works if RAM is tight)
-ollama pull qwen2.5:14b    # eval judge (only needed for generation eval)
+ollama pull gemma3:12b     # eval judge (only needed for generation eval)
 
 # 3. (Optional) configure the hosted backend for deployment
 echo "HUGGINGFACEHUB_API_TOKEN=hf_xxx" > .env
@@ -202,7 +202,7 @@ Similarity beats MMR at every k on this corpus, and retrieval is near-saturated 
 python src/evaluate_generation.py
 ```
 
-Runs three checks, all local (Ollama judge and bge-m3):
+Runs three checks, all local (`gemma3:12b` judge on Ollama, and bge-m3):
 
 1. **Refusal** on the 50 negatives: does the assistant correctly decline? A yes/no judge decides. `unanswerable_on_topic` is the real hallucination-resistance test, since on-topic context is retrieved but holds no answer.
 2. **Retrieval distance by type**: shows that a distance cutoff could screen `out_of_scope` but not `unanswerable_on_topic`, which is why check 1 exists.
@@ -210,19 +210,21 @@ Runs three checks, all local (Ollama judge and bge-m3):
 
 Answers are cached to `evals/reports/answers_cache.json`, keyed by a signature of the model and system prompt, and the cache auto-invalidates when either changes. A full run takes about 2.5 hours, mostly RAGAS on the local judge.
 
-Results:
+Results (judge `gemma3:12b`):
 
 | Metric | Score |
 |--------|-------|
-| Faithfulness | 0.94 |
-| Answer relevancy | 0.82 |
-| Semantic similarity | 0.82 |
+| Faithfulness | 0.97 |
+| Answer relevancy | 0.83 |
+| Semantic similarity | 0.83 |
 | Refusal, out_of_scope | **27 / 27 (100%)** |
 | Refusal, unanswerable_on_topic | **23 / 23 (100%)** |
 
-Outputs land in `evals/reports/` (`generation_eval.json`, `ragas_per_row.csv`, plots). `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the local 14B judge cannot emit reliably; it can be re-enabled in `eval.generation.ragas_metrics` with a stronger hosted judge.
+![Generation results: faithfulness 0.97, answer relevancy 0.83, semantic similarity 0.83, refusal rate 1.00, alongside best retrieval distance by question type](evals/reports/generation_eval.png)
 
-> **Known limitation: judge from the same model family.** The judge (`qwen2.5:14b`) is from the same family as the generator (`qwen2.5:7b`), which I chose so that evaluation stays free and runs locally. LLM judges tend to rate text from their own model family more favourably (self-preference bias). [Pombal et al. (2026)](https://arxiv.org/abs/2604.06996) show this holds even for binary yes/no verdicts on objective criteria, and that ensembling judges from different families reduces it without eliminating it. The judge-based scores above (refusal and RAGAS) may therefore be somewhat optimistic. Scoring the same cached answers with a judge from a different family is a planned improvement. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
+Outputs land in `evals/reports/` (`generation_eval.json`, `ragas_per_row.csv`, plots). `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the earlier `qwen2.5:14b` judge could not emit reliably. It has not been retried with `gemma3:12b`, and can be re-enabled in `eval.generation.ragas_metrics`.
+
+**Why a judge from a different family.** LLM judges tend to rate text from their own model family more favourably (self-preference bias). [Pombal et al. (2026)](https://arxiv.org/abs/2604.06996) show this holds even for binary yes/no verdicts on objective criteria. The first judge, `qwen2.5:14b`, was from the same family as the generator (`qwen2.5:7b`), so I re-scored the same cached answers with Google's `gemma3:12b` and made it the default judge. It scored them no lower (faithfulness 0.95 → 0.97, answer relevancy 0.82 → 0.83, refusal 100% under both), so the earlier results were not inflated by self-preference. The two judges agreed on the averages but only moderately on individual answers, so a single answer's score depends on the judge. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
 
 ---
 
@@ -239,6 +241,6 @@ The system prompt binds the model to a few rules: answer only from the provided 
 - **Don't trust a small model with what code can do deterministically.** The 7B model drifted into Portuguese on English questions and declined in English by default, so the reply language is now detected in code and forced in the prompt.
 - **A RAG system only knows what is in its chunks.** The assistant could not say who wrote the thesis until I added a synthetic front-matter section with the title, author and supervisors.
 - **Simpler can win.** Plain similarity search beat MMR at every k on this corpus.
-- **The judge is part of the measurement.** The local 14B judge could not reliably produce the strict JSON that `factual_correctness` needs, small RAGAS differences (under about 0.02) are judge noise, and a judge from the generator's own family is likely to score it optimistically.
+- **The judge is part of the measurement.** The first local judge could not reliably produce the strict JSON that `factual_correctness` needs, and small RAGAS differences (under about 0.02) are judge noise. Swapping in a judge from a different family tested for self-preference bias: the averages held, but scores for individual answers shifted, so a judge's verdict on a single answer shouldn't be over-read.
 - **Evaluate what you ship.** Running the same model locally for evaluation and hosted for deployment keeps the evaluation results meaningful for production.
 - **Make results reproducible and stale state impossible.** A lockfile, one config file, an answer cache keyed by model and prompt, and an index stamped with its embedding model mean old results or a mismatched index can't slip through unnoticed.

@@ -47,7 +47,7 @@ eval:
     search_types: [similarity, mmr]
   generation:
     k: 5                        # chunks retrieved per question. Not part of the answer-cache [signature: set use_cache false after changing it]
-    judge_model: qwen2.5:14b    # local Ollama judge
+    judge_model: gemma3:12b     # local Ollama judge, a different family from the qwen generator (avoids self-preference bias)
     judge_num_predict: 4096     # RAGAS claim-decomposition JSON is long (esp. in PT)
     use_cache: true             # reuse cached answers when model + prompt are unchanged
     sample: null                # e.g. 5 to only run the first few questions
@@ -55,5 +55,6 @@ eval:
     ragas_max_workers: 2        # Ollama is serial; more workers just time out
     ragas_timeout: 600          # seconds per metric job
     # Available: faithfulness, answer_relevancy, factual_correctness, semantic_similarity.
-    # factual_correctness is off: the local 14B judge can't produce its strict JSON reliably.
+    # factual_correctness is off: qwen2.5:14b couldn't produce its strict JSON reliably
+    # (not yet retried with gemma3:12b).
     ragas_metrics: [faithfulness, answer_relevancy, semantic_similarity]
