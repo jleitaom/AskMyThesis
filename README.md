@@ -147,7 +147,7 @@ python src/indexing.py                     # → data/chroma/  (bge-m3 embedding
 streamlit run app.py
 ```
 
-This opens a chat UI: ask in Portuguese or English, read the grounded answer, and expand **Sources** to see the cited thesis sections (with retrieval distances). The app retrieves the top 4 chunks per question (`retrieval.k`). Retrieval runs locally; generation goes through the configured backend.
+This opens a chat UI: ask in Portuguese or English, read the grounded answer as it streams in, and expand **Sources** to see the cited thesis sections (with retrieval distances). The app retrieves the top 4 chunks per question (`retrieval.k`). Retrieval runs locally; generation goes through the configured backend.
 
 Smoke tests without the UI:
 

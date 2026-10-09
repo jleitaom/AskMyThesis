@@ -13,8 +13,8 @@ model, so the local evaluation genuinely predicts production behaviour:
 Grounding contract (in the system prompt):
   - answer ONLY from the provided context
   - if the context doesn't cover it, say so — never invent or use outside knowledge
-  - cite the section number(s) used
   - answer in the SAME language as the question (PT or EN)
+The sections used are returned as sources and shown under the answer in the app.
 """
 
 # IMPORTS ---------------------------------------------------------------------------------
@@ -174,6 +174,30 @@ class Generator:
             return {"query": query, "answer": message, "sources": hits, "error": code}
 
         return {"query": query, "answer": response.content, "sources": hits, "error": None}
+
+    def stream(self, query, k=None, search_type=None):
+        """
+        Streaming version of answer() for the app. Retrieves right away and returns
+        (result, chunks): chunks is an iterator of answer text that calls the LLM lazily,
+        and result (same keys as answer()) is filled in as it's consumed. On an LLM error
+        the friendly message is streamed as well and result["error"] is set.
+        """
+        hits = self.retriever.retrieve(query, k=k, search_type=search_type)
+        result = {"query": query, "answer": "", "sources": hits, "error": None}
+
+        def chunks():
+            try:
+                for chunk in self.llm.stream(_build_messages(query, hits)):
+                    result["answer"] += chunk.content
+                    yield chunk.content
+            except Exception as exc:
+                code, message = _error_catch(exc)
+                message = f"\n\n{message}" if result["answer"] else message   # after partial text
+                result["answer"] += message
+                result["error"] = code
+                yield message
+
+        return result, chunks()
 
 
 def main():

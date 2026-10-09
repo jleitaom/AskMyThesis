@@ -7,6 +7,7 @@ Streamlit chat UI for AskMyThesis.
 
 # IMPORTS ---------------------------------------------------------------------------------
 
+import itertools
 import sys
 from pathlib import Path
 
@@ -64,9 +65,12 @@ if query := st.chat_input("Ask about the thesis…"):
         st.markdown(query)
 
     with st.chat_message("assistant"):
+        # Keep the spinner until the first token arrives (retrieval + prompt processing),
+        # then stream the rest of the answer as it's generated.
         with st.spinner("Thinking…"):
-            result = generator.answer(query)   # k / search_type from retrieval config
-        st.markdown(result["answer"])
+            result, chunks = generator.stream(query)   # k / search_type from retrieval config
+            first = next(chunks, "")
+        st.write_stream(itertools.chain([first], chunks))
         if not result.get("error"):
             render_sources(result["sources"])
 
