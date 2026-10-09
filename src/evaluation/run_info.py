@@ -27,9 +27,11 @@ def _git(*args):
 def run_stamp(config):
     """
     Git SHA, whether tracked files had uncommitted changes, UTC timestamp, and the
-    given config (the settings that affect the report's numbers).
+    given config (the settings that affect the report's numbers). Changes under evals/
+    don't count as dirty: the eval writes its own outputs there (e.g. the answer cache)
+    before the report is stamped.
     """
-    status = _git("status", "--porcelain", "--untracked-files=no")
+    status = _git("status", "--porcelain", "--untracked-files=no", "--", ".", ":(exclude)evals")
     return {
         "git_sha": _git("rev-parse", "HEAD"),
         "git_dirty": bool(status) if status is not None else None,
