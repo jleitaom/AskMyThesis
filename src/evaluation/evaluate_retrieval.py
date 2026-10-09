@@ -164,7 +164,7 @@ def main():
     
     # Print overall results and language breakdown.
     _print_table(results)
-    _print_language_breakdown(per_lang, k=5, search_type="similarity")
+    _print_language_breakdown(per_lang, k=APP_K, search_type="similarity")
  
     # Best search_type by recall at the app's k (skipped if that k isn't in the sweep)
     candidates = [(st, k) for (st, k) in results if k == APP_K]

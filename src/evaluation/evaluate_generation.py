@@ -17,9 +17,10 @@ Retrieval is covered by evaluate_retrieval.py; this grades generation. All local
      factual_correctness is available but disabled by default; see eval.generation.ragas_metrics.
  
 Generated answers are cached to REPORT_DIR/answers_cache.json (evals/generation/), keyed by question and
-tagged with a signature of the generation setup (model + system prompt). Re-runs reuse
-the cache and skip the slow generation step; if the signature changes (you switch model
-or edit the prompt) the cache is discarded and answers regenerate. Set
+tagged with a signature of the generation setup (model + system prompt + retrieval
+settings). Re-runs reuse the cache and skip the slow generation step; if the signature
+changes (you switch model, edit the prompt or change retrieval k / search_type) the
+cache is discarded and answers regenerate. Set
 eval.generation.use_cache to false in the config to force regeneration, and
 eval.generation.sample to a small number while developing.
 """
@@ -50,7 +51,7 @@ GOLDEN_PATH = CFG["paths"]["golden"]
 REPORT_DIR = CFG["paths"]["generation_reports"]
 ANSWERS_CACHE = REPORT_DIR / "answers_cache.json"
 USE_CACHE = EVAL_CFG["use_cache"]   # reuse cached answers when the generation signature matches
-K = EVAL_CFG["k"]                   # chunks retrieved per question
+RETRIEVAL_CFG = CFG["retrieval"]    # k / search_type / fetch_k, shared with the app
 
 JUDGE_MODEL = EVAL_CFG["judge_model"]              # local Ollama judge
 JUDGE_NUM_PREDICT = EVAL_CFG["judge_num_predict"]  # RAGAS claim-decomposition JSON is long
@@ -95,11 +96,15 @@ def get_judge():
  
 def _generation_signature(generator):
     """
-    Fingerprint of what produces an answer — the model and the system prompt. If either
-    changes, cached answers are stale and must be regenerated.
+    Fingerprint of what produces an answer — the model, the system prompt and the
+    retrieval settings (which chunks the model sees). If any changes, cached answers are
+    stale and must be regenerated.
     """
     model = getattr(generator.llm, "model", type(generator.llm).__name__)
-    return hashlib.sha256(f"{model}||{SYSTEM_PROMPT}".encode("utf-8")).hexdigest()[:16]
+    retrieval = f"k={RETRIEVAL_CFG['k']}|search_type={RETRIEVAL_CFG['search_type']}"
+    if RETRIEVAL_CFG["search_type"] == "mmr":   # fetch_k only affects MMR
+        retrieval += f"|fetch_k={RETRIEVAL_CFG['fetch_k']}"
+    return hashlib.sha256(f"{model}||{SYSTEM_PROMPT}||{retrieval}".encode("utf-8")).hexdigest()[:16]
 
 
 def generate_answers(generator, golden, cache_path=ANSWERS_CACHE, use_cache=USE_CACHE):
@@ -108,7 +113,7 @@ def generate_answers(generator, golden, cache_path=ANSWERS_CACHE, use_cache=USE_
 
     Answers are cached per question in cache_path so re-runs skip the slow generation
     step. The cache is tagged with the generation signature; if it no longer matches
-    (model or prompt changed) the cache is dropped and everything regenerates.
+    (model, prompt or retrieval settings changed) the cache is dropped and everything regenerates.
     """
     signature = _generation_signature(generator)
     answers = {}   # question -> {"answer", "error", "sources"}
@@ -128,7 +133,7 @@ def generate_answers(generator, golden, cache_path=ANSWERS_CACHE, use_cache=USE_
             result = cached
         else:
             print(f"Generating answer {i}/{len(golden)}...")
-            result = generator.answer(q, k=K)
+            result = generator.answer(q)   # k / search_type from retrieval config, as in the app
             answers[q] = {"answer": result["answer"], "error": result.get("error"),
                           "sources": result.get("sources", [])}
             generated += 1

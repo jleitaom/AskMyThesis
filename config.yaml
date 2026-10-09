@@ -30,7 +30,7 @@ chunking:
 index:
   collection: thesis
 
-retrieval:                      # used by the app and Generator.answer()
+retrieval:                      # used by the app, Generator.answer() and the generation eval
   k: 4
   search_type: similarity       # similarity | mmr
   fetch_k: 20                   # MMR candidate pool
@@ -46,11 +46,10 @@ eval:
   retrieval:
     k_values: [1, 2, 3, 4, 5, 6, 7, 10]
     search_types: [similarity, mmr]
-  generation:
-    k: 5                        # chunks retrieved per question. Not part of the answer-cache [signature: set use_cache false after changing it]
+  generation:                   # retrieves with the `retrieval` settings above, same as the app
     judge_model: gemma3:12b     # local Ollama judge, a different family from the qwen generator (avoids self-preference bias)
     judge_num_predict: 4096     # RAGAS claim-decomposition JSON is long (esp. in PT)
-    use_cache: true             # reuse cached answers when model + prompt are unchanged
+    use_cache: true             # reuse cached answers when model, prompt and retrieval settings are unchanged
     sample: null                # e.g. 5 to only run the first few questions
     ragas_sample: null          # cap how many answerable answers RAGAS scores (null = all)
     ragas_max_workers: 2        # Ollama is serial; more workers just time out

@@ -184,7 +184,7 @@ def main():
     for query in ["Qual é o objetivo do estudo?",
                   "What software was used to simulate the processes?"]:
 
-        result = generator.answer(query, k=5)
+        result = generator.answer(query)
         print(f"Q: {result['query']}")
         print(f"A: {result['answer']}\n")
 
