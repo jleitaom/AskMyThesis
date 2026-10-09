@@ -44,6 +44,7 @@ from ragas.embeddings import LangchainEmbeddingsWrapper
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # src/, for config + generation
 from config import CFG  # noqa: E402
 from generation import Generator, SYSTEM_PROMPT  # noqa: E402
+from run_info import run_stamp  # noqa: E402
 
 EVAL_CFG = CFG["eval"]["generation"]
 
@@ -308,7 +309,9 @@ def _safe_mean(series):
  
 def save_report(refusal, stats, df):
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
-    summary = {"judge": JUDGE_MODEL, "refusal": refusal, "distance": stats}
+    run = run_stamp({name: CFG[name] for name in ("embedding", "chunking", "retrieval", "generation")}
+                    | {"eval": {"generation": EVAL_CFG}})
+    summary = {"run": run, "judge": JUDGE_MODEL, "refusal": refusal, "distance": stats}
     if df is not None:
         present = [name for name in RAGAS_METRICS if name in df.columns]
         summary["ragas"] = {name: _safe_mean(df[name]) for name in present}

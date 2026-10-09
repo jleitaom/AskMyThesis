@@ -23,6 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # src/, for config + retrieval
 from config import CFG  # noqa: E402
 from retrieval import Retriever  # noqa: E402
+from run_info import run_stamp  # noqa: E402
 
 GOLDEN_PATH = CFG["paths"]["golden"]
 REPORT_DIR = CFG["paths"]["retrieval_reports"]
@@ -177,7 +178,12 @@ def main():
     _save_csv(results, out)
     out_lang = REPORT_DIR / "retrieval_eval_by_lang.csv"
     _save_lang_csv(per_lang, out_lang)
-    print(f"\nsaved -> {out}, {out_lang.name}")
+    # CSVs can't hold metadata, so the provenance stamp goes in a sidecar file.
+    out_run = REPORT_DIR / "run_info.json"
+    run = run_stamp({name: CFG[name] for name in ("embedding", "chunking", "index")}
+                    | {"eval": {"retrieval": CFG["eval"]["retrieval"]}})
+    out_run.write_text(json.dumps(run, indent=2), encoding="utf-8")
+    print(f"\nsaved -> {out}, {out_lang.name}, {out_run.name}")
  
  
 if __name__ == "__main__":
