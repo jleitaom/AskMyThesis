@@ -195,10 +195,11 @@ Results (similarity):
 |---|-------|----------|-----|
 | 1 | 0.79 | 0.79 | 0.79 |
 | 3 | 0.97 | 0.97 | 0.88 |
-| **5** | **0.99** | **0.99** | **0.88** |
+| **4** | **0.99** | **0.99** | **0.88** |
+| 5 | 0.99 | 0.99 | 0.88 |
 | 10 | 1.00 | 1.00 | 0.89 |
 
-Similarity beats MMR at every k above 1 (they tie at k=1) on this corpus, and retrieval is near-saturated by k=5.
+Similarity beats MMR at every k above 1 (they tie at k=1) on this corpus. Retrieval saturates at k=4 (k=5 to 7 add nothing), so the app and the generation eval both use k=4.
 
 ![Retrieval quality vs k: recall@k and MRR@k for similarity and MMR search, with the app's k=4 marked](evals/retrieval/retrieval_eval.png)
 
@@ -214,23 +215,23 @@ Runs three checks, all local (`gemma3:12b` judge on Ollama, and bge-m3):
 2. **Retrieval distance by type**: shows that a distance cutoff could screen `out_of_scope` but not `unanswerable_on_topic`, which is why check 1 exists.
 3. **RAGAS** on the answerable questions: faithfulness and answer relevancy (vs retrieved context) and semantic similarity (vs the reference answer).
 
-Answers are cached to `evals/generation/answers_cache.json`, keyed by a signature of the model and system prompt, and the cache auto-invalidates when either changes. A full run takes about 2.5 hours, mostly RAGAS on the local judge.
+The eval retrieves with the same `retrieval` settings as the app, so what is measured is what ships. Answers are cached to `evals/generation/answers_cache.json`, keyed by a signature of the model, system prompt and retrieval settings, and the cache auto-invalidates when any of them changes. A full run takes about 1.5 hours, mostly RAGAS on the local judge. Each report records the git commit and settings it was produced with (`run` in `generation_eval.json`, `evals/retrieval/run_info.json`).
 
-Results (judge `gemma3:12b`):
+Results (judge `gemma3:12b`, k=4):
 
 | Metric | Score |
 |--------|-------|
-| Faithfulness | 0.97 |
-| Answer relevancy | 0.83 |
-| Semantic similarity | 0.83 |
+| Faithfulness | 0.98 |
+| Answer relevancy | 0.85 |
+| Semantic similarity | 0.82 |
 | Refusal, out_of_scope | **27 / 27 (100%)** |
 | Refusal, unanswerable_on_topic | **23 / 23 (100%)** |
 
-![Generation results: faithfulness 0.97, answer relevancy 0.83, semantic similarity 0.83, refusal rate 1.00, alongside best retrieval distance by question type](evals/generation/generation_eval.png)
+![Generation results: faithfulness 0.98, answer relevancy 0.85, semantic similarity 0.82, refusal rate 1.00, alongside best retrieval distance by question type](evals/generation/generation_eval.png)
 
 Outputs land in `evals/generation/` (`generation_eval.json`, `ragas_per_row.csv`, charts). Redraw all the charts (retrieval and generation) from the saved reports in seconds, without loading any model, with `uv run --group notebooks python src/evaluation/plot_evals.py`. `factual_correctness` is disabled by default, since its claim-decomposition step needs strict JSON the earlier `qwen2.5:14b` judge could not emit reliably. It has not been retried with `gemma3:12b`, and can be re-enabled in `eval.generation.ragas_metrics`.
 
-**Why a judge from a different family.** LLM judges tend to rate text from their own model family more favourably (self-preference bias). [Pombal et al. (2026)](https://arxiv.org/abs/2604.06996) show this holds even for binary yes/no verdicts on objective criteria. The first judge, `qwen2.5:14b`, was from the same family as the generator (`qwen2.5:7b`), so I re-scored the same cached answers with Google's `gemma3:12b` and made it the default judge. It scored them no lower (faithfulness 0.95 → 0.97, answer relevancy 0.82 → 0.83, refusal 100% under both), so the earlier results were not inflated by self-preference. The two judges agreed on the averages but only moderately on individual answers, so a single answer's score depends on the judge. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
+**Why a judge from a different family.** LLM judges tend to rate text from their own model family more favourably (self-preference bias). [Pombal et al. (2026)](https://arxiv.org/abs/2604.06996) show this holds even for binary yes/no verdicts on objective criteria. The first judge, `qwen2.5:14b`, was from the same family as the generator (`qwen2.5:7b`), so I re-scored the same cached answers (generated at k=5, before the eval was aligned with the app) with Google's `gemma3:12b` and made it the default judge. It scored them no lower (faithfulness 0.95 → 0.97, answer relevancy 0.82 → 0.83, refusal 100% under both), so the earlier results were not inflated by self-preference. The two judges agreed on the averages but only moderately on individual answers, so a single answer's score depends on the judge. Any other Ollama model can be used as the judge by changing `eval.generation.judge_model`. A hosted judge would need a small code change in `get_judge()`.
 
 ---
 
@@ -242,7 +243,7 @@ The system prompt binds the model to a few rules: answer only from the provided 
 
 ## What I learned
 
-- **Build the evaluation set before tuning anything.** The hand-built golden set showed that retrieval was nearly saturated by k=5, so further effort belonged in generation, not in more retrieval tweaks.
+- **Build the evaluation set before tuning anything.** The hand-built golden set showed that retrieval was saturated by k=4, so further effort belonged in generation, not in more retrieval tweaks.
 - **Negative questions matter as much as answerable ones.** A retrieval-distance cutoff screens off-topic questions but not on-topic ones the thesis never answers. Only an explicit `unanswerable_on_topic` set shows whether the model hallucinates.
 - **Don't trust a small model with what code can do deterministically.** The 7B model drifted into Portuguese on English questions and declined in English by default, so the reply language is now detected in code and forced in the prompt.
 - **A RAG system only knows what is in its chunks.** The assistant could not say who wrote the thesis until I added a synthetic front-matter section with the title, author and supervisors.

@@ -1,4 +1,46 @@
 {
+  "run": {
+    "git_sha": "86c820cb05f24969e31bf2bd97bb35b4b008cabd",
+    "git_dirty": false,
+    "timestamp": "2026-10-09T14:50:50+00:00",
+    "config": {
+      "embedding": {
+        "model": "BAAI/bge-m3"
+      },
+      "chunking": {
+        "chunk_size": 500,
+        "chunk_overlap": 75
+      },
+      "retrieval": {
+        "k": 4,
+        "search_type": "similarity",
+        "fetch_k": 20
+      },
+      "generation": {
+        "backend": "ollama",
+        "ollama_model": "qwen2.5:7b",
+        "hf_model": "Qwen/Qwen2.5-7B-Instruct",
+        "max_new_tokens": 512,
+        "temperature": 0
+      },
+      "eval": {
+        "generation": {
+          "judge_model": "gemma3:12b",
+          "judge_num_predict": 4096,
+          "use_cache": true,
+          "sample": null,
+          "ragas_sample": null,
+          "ragas_max_workers": 2,
+          "ragas_timeout": 600,
+          "ragas_metrics": [
+            "faithfulness",
+            "answer_relevancy",
+            "semantic_similarity"
+          ]
+        }
+      }
+    }
+  },
   "judge": "gemma3:12b",
   "refusal": {
     "out_of_scope": {
@@ -15,29 +57,29 @@
   "distance": {
     "answerable": {
       "n": 73,
-      "min": 0.1921411156654358,
-      "median": 0.3648996353149414,
-      "mean": 0.3558949950623186,
-      "max": 0.4802834987640381
+      "min": 0.19214099645614624,
+      "median": 0.3648998737335205,
+      "mean": 0.3558949975118245,
+      "max": 0.48028355836868286
     },
     "out_of_scope": {
       "n": 27,
       "min": 0.5231717824935913,
-      "median": 0.6593783497810364,
-      "mean": 0.6568299267027113,
-      "max": 0.7478424310684204
+      "median": 0.6593784093856812,
+      "mean": 0.6568299090420758,
+      "max": 0.7478423118591309
     },
     "unanswerable_on_topic": {
       "n": 23,
-      "min": 0.35105741024017334,
-      "median": 0.4655901789665222,
-      "mean": 0.4519046596858812,
-      "max": 0.537764310836792
+      "min": 0.3510572910308838,
+      "median": 0.46559005975723267,
+      "mean": 0.45190465709437494,
+      "max": 0.5377645492553711
     }
   },
   "ragas": {
-    "faithfulness": 0.9735812133072409,
-    "answer_relevancy": 0.8308523187935591,
-    "semantic_similarity": 0.8251111284794258
+    "faithfulness": 0.9789954337899544,
+    "answer_relevancy": 0.8469317842905225,
+    "semantic_similarity": 0.8202560773698807
   }
 }

@@ -1,0 +1,35 @@
+{
+  "git_sha": "86c820cb05f24969e31bf2bd97bb35b4b008cabd",
+  "git_dirty": false,
+  "timestamp": "2026-10-09T13:16:52+00:00",
+  "config": {
+    "embedding": {
+      "model": "BAAI/bge-m3"
+    },
+    "chunking": {
+      "chunk_size": 500,
+      "chunk_overlap": 75
+    },
+    "index": {
+      "collection": "thesis"
+    },
+    "eval": {
+      "retrieval": {
+        "k_values": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          10
+        ],
+        "search_types": [
+          "similarity",
+          "mmr"
+        ]
+      }
+    }
+  }
+}
