@@ -57,9 +57,7 @@ DEFAULTS = {
         "fetch_k": 20,
     },
     "generation": {
-        "backend": "ollama",
-        "ollama_model": "qwen2.5:7b",
-        "hf_model": "Qwen/Qwen2.5-7B-Instruct",
+        "model": "qwen2.5:7b",
         "max_new_tokens": 512,
         "temperature": 0,
     },

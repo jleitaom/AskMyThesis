@@ -328,9 +328,8 @@ def main():
     if SAMPLE:
         golden = golden[:SAMPLE]
  
-    # Create generator object and generate answers. Pin the local backend so the
-    # eval always runs on Ollama (same model as HF deploy) regardless of LLM_BACKEND.
-    generator = Generator(backend="ollama")
+    # Create generator object and generate answers (same local model as the app)
+    generator = Generator()
     print(f"generating answers for {len(golden)} questions...")
     records = generate_answers(generator, golden)
  

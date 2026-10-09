@@ -36,9 +36,7 @@ retrieval:                      # used by the app, Generator.answer() and the ge
   fetch_k: 20                   # MMR candidate pool
 
 generation:
-  backend: ollama               # ollama (local/eval) | hf (deploy); env LLM_BACKEND overrides
-  ollama_model: qwen2.5:7b
-  hf_model: Qwen/Qwen2.5-7B-Instruct
+  model: qwen2.5:7b             # local Ollama model, used by the app and the generation eval
   max_new_tokens: 512
   temperature: 0
 

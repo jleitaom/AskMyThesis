@@ -28,7 +28,7 @@ def load_generator():
     """
     Build the Generator once per session and reuse it
     """
-    return Generator()   # backend from LLM_BACKEND env, else generation.backend
+    return Generator()
 
 
 def render_sources(sources):

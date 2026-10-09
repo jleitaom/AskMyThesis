@@ -1,0 +1,4 @@
+[server]
+# Streamlit's file watcher probes every imported module, and transformers'
+# lazy vision modules raise on import without torchvision, flooding the log.
+fileWatcherType = "none"

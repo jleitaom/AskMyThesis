@@ -12,7 +12,7 @@ It was presented as the final project for the **EDIT. - Deep Learning with Tenso
 
 - **Bilingual, grounded answers.** European Portuguese and English, answered only from retrieved context, with section citations.
 - **Refusal by design.** Out-of-scope and unanswerable questions are declined, in the question's language, measured at 100% refusal on 50 negative test cases.
-- **Evaluate locally, deploy in the cloud.** A single backend switch runs the same model locally (Ollama) for free, reproducible evaluation and on Hugging Face Inference for deployment, so local evaluation genuinely predicts production behaviour.
+- **Fully local, evaluate what you run.** Generation, embeddings and the evaluation judge all run locally (Ollama + bge-m3): no API keys, no usage costs, and the app uses exactly the model that was evaluated.
 - **Rigorously evaluated.** Retrieval (recall@k, hit@k, MRR) and generation (RAGAS faithfulness, answer relevancy, semantic similarity, plus a refusal check) both scored against a hand-built golden set.
 
 ---
@@ -32,13 +32,13 @@ The same flow, mapped to the scripts:
                         SERVING (per question)
   question ──► Retriever (bge-m3 + Chroma) ──► Generator (grounded prompt → LLM) ──► answer + cited sources
                                                               │
-                                          ollama (local/eval)  or  hf (deploy)
+                                                    qwen2.5:7b (local Ollama)
 ```
 
 | Stage | Component | Choice |
 |-------|-----------|--------|
 | Embeddings / retrieval | `bge-m3` (BAAI) in a persisted **Chroma** collection, cosine distance | Strong multilingual embeddings for a PT/EN corpus |
-| Generation | **Qwen2.5-7B-Instruct** | Runs locally as `qwen2.5:7b` (Ollama) and hosted as `Qwen/Qwen2.5-7B-Instruct` (HF), the same model on both sides |
+| Generation | **Qwen2.5-7B-Instruct** | Runs locally as `qwen2.5:7b` (Ollama), the same model in the app and the evaluation |
 | Eval judge | `gemma3:12b` (local Ollama) | Free and deterministic, and from a different model family than the generator, which avoids self-preference bias |
 
 ---
@@ -57,7 +57,7 @@ AskMyThesis/
 │   ├── chunking.py                 # Stage 3: sections → token-aware chunks (title-prepended)
 │   ├── indexing.py                 # Stage 4: embed chunks (bge-m3) → persisted Chroma index
 │   ├── retrieval.py                # Query the index (similarity / MMR), returns scored dicts
-│   ├── generation.py               # Retrieve → grounded prompt → LLM (ollama | hf backend)
+│   ├── generation.py               # Retrieve → grounded prompt → LLM (local Ollama)
 │   └── evaluation/
 │       ├── evaluate_retrieval.py   # recall@k / hit@k / MRR vs the golden set
 │       ├── evaluate_generation.py  # RAGAS + refusal + distance-by-type checks
@@ -83,7 +83,6 @@ AskMyThesis/
 **Prerequisites**
 - [uv](https://docs.astral.sh/uv/) (installs Python 3.12 automatically, pinned in `.python-version`)
 - [Ollama](https://ollama.com/), for local generation and evaluation
-- A Hugging Face token, only for the hosted (`hf`) generation backend
 
 ```bash
 # 1. Create the virtual environment (.venv) and install dependencies from uv.lock
@@ -93,9 +92,6 @@ source .venv/bin/activate     # or prefix commands with `uv run`
 # 2. Pull the models used locally (generation + eval judge)
 ollama pull qwen2.5:7b     # generation (qwen2.5:3b works if RAM is tight)
 ollama pull gemma3:12b     # eval judge (only needed for generation eval)
-
-# 3. (Optional) configure the hosted backend for deployment
-echo "HUGGINGFACEHUB_API_TOKEN=hf_xxx" > .env
 ```
 
 `bge-m3` (about 2 GB) downloads automatically from Hugging Face the first time the index is built or queried.
@@ -104,7 +100,7 @@ echo "HUGGINGFACEHUB_API_TOKEN=hf_xxx" > .env
 
 ## Configuration
 
-Run settings live in [`config.yaml`](config.yaml), not in the scripts: file paths, PDF page range, embedding model, chunk size/overlap, retrieval `k` / search type, generation backend and models, and the evaluation sweep, judge and RAGAS settings. Every script reads it.
+Run settings live in [`config.yaml`](config.yaml), not in the scripts: file paths, PDF page range, embedding model, chunk size/overlap, retrieval `k` / search type, generation model, and the evaluation sweep, judge and RAGAS settings. Every script reads it.
 
 To try a variant without editing the default, write a YAML file with only the keys you want to change and pass it with `--config`:
 
@@ -122,7 +118,7 @@ streamlit run app.py -- --config configs/quick.yaml     # note the extra `--`
 ASKMYTHESIS_CONFIG=configs/quick.yaml python src/chunking.py   # env var works too
 ```
 
-Missing keys fall back to the defaults in `src/config.py`. Unknown keys raise an error, so a typo can't silently fall back to a default. Relative paths are resolved from the repo root. Prompts, text-cleaning rules and secrets are deliberately not configurable: prompts and cleaning rules are part of the evaluated method and stay in code, and secrets stay in `.env`.
+Missing keys fall back to the defaults in `src/config.py`. Unknown keys raise an error, so a typo can't silently fall back to a default. Relative paths are resolved from the repo root. Prompts and text-cleaning rules are deliberately not configurable: they are part of the evaluated method and stay in code.
 
 ---
 
@@ -147,7 +143,7 @@ python src/indexing.py                     # → data/chroma/  (bge-m3 embedding
 streamlit run app.py
 ```
 
-This opens a chat UI: ask in Portuguese or English, read the grounded answer as it streams in, and expand **Sources** to see the cited thesis sections (with retrieval distances). The app retrieves the top 4 chunks per question (`retrieval.k`). Retrieval runs locally; generation goes through the configured backend.
+This opens a chat UI: ask in Portuguese or English, read the grounded answer as it streams in, and expand **Sources** to see the cited thesis sections (with retrieval distances). The app retrieves the top 4 chunks per question (`retrieval.k`). Everything runs locally, so Ollama must be running (`ollama serve`, or the Ollama app).
 
 Smoke tests without the UI:
 
@@ -158,16 +154,11 @@ python src/generation.py    # answers a couple of sample questions with citation
 
 ---
 
-## Generation backends
+## Why generation is local
 
-`generation.py` selects its LLM via `generation.backend` in the config, which the `LLM_BACKEND` environment variable overrides (handy for deployment):
+An earlier version also had a hosted backend that ran the same model on Hugging Face Inference Providers for a public deployment. That proved fragile: serverless providers drop older models without notice, and by October 2026 `Qwen/Qwen2.5-7B-Instruct` was down to a single provider. Each time that happens, the app has to switch models, which means either re-running the evaluation or serving a model that was never measured. Running generation locally removes the dependency, the API token and the usage costs, and guarantees that the app runs exactly the evaluated model.
 
-| `LLM_BACKEND` | Model | Use |
-|---------------|-------|-----|
-| `ollama` (default) | local `qwen2.5:7b` | Evaluation and local dev: free, offline, deterministic |
-| `hf` | `Qwen/Qwen2.5-7B-Instruct` via HF Inference | Deployment: no local weights load, needs `HUGGINGFACEHUB_API_TOKEN` |
-
-Both backends are greedy (`temperature=0`) for reproducibility, and both run the same underlying model, which is the whole point: what is measured locally is what ships. The evaluation scripts pin `backend="ollama"` regardless of the environment variable. The HF backend maps API failures (quota, rate-limit, model-loading) to clean bilingual user messages instead of stack traces.
+Generation is greedy (`temperature=0`) for reproducibility. If Ollama isn't running or the model isn't pulled, the app shows a short bilingual message saying what to do instead of a stack trace.
 
 ---
 
@@ -249,5 +240,5 @@ The system prompt binds the model to a few rules: answer only from the provided 
 - **A RAG system only knows what is in its chunks.** The assistant could not say who wrote the thesis until I added a synthetic front-matter section with the title, author and supervisors.
 - **Simpler can win.** Plain similarity search beat MMR at every k on this corpus.
 - **The judge is part of the measurement.** The first local judge could not reliably produce the strict JSON that `factual_correctness` needs, and small RAGAS differences (under about 0.02) are judge noise. Swapping in a judge from a different family tested for self-preference bias: the averages held, but scores for individual answers shifted, so a judge's verdict on a single answer shouldn't be over-read.
-- **Evaluate what you ship.** Running the same model locally for evaluation and hosted for deployment keeps the evaluation results meaningful for production.
+- **Evaluate what you ship, and keep it stable.** A hosted backend tied the app to providers that can drop a model at any time, which would break the link between the evaluated model and the served one. Running generation locally keeps that link permanent.
 - **Make results reproducible and stale state impossible.** A lockfile, one config file, an answer cache keyed by model and prompt, and an index stamped with its embedding model mean old results or a mismatched index can't slip through unnoticed.

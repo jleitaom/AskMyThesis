@@ -1,14 +1,9 @@
 """
 Answer questions about the thesis, grounded in retrieved chunks.
 
-Two interchangeable backends, selected by generation.backend in the config (or the
-LLM_BACKEND env var, which overrides it). Both run the SAME
-model, so the local evaluation genuinely predicts production behaviour:
-  - "ollama" (default) — local qwen2.5:7b via Ollama. Free, offline; this is what the
-    evaluation scripts use so heavy RAGAS runs don't burn API quota.
-  - "hf" — the same model on Hugging Face Inference Providers, via
-    HuggingFaceEndpoint(provider="auto") wrapped in ChatHuggingFace. Used for
-    deployment (no local weights load). Auth uses HUGGINGFACEHUB_API_TOKEN (from .env).
+Generation runs locally on Ollama (qwen2.5:7b by default): free, offline and greedy,
+and the app and the evaluation use the exact same model, so the evaluation genuinely
+predicts what the app does.
 
 Grounding contract (in the system prompt):
   - answer ONLY from the provided context
@@ -19,26 +14,19 @@ The sections used are returned as sources and shown under the answer in the app.
 
 # IMPORTS ---------------------------------------------------------------------------------
 
-import os
-
-from dotenv import load_dotenv
+import httpx
 from langdetect import detect, DetectorFactory, LangDetectException
 from langchain_ollama import ChatOllama
-from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from config import CFG
 from retrieval import Retriever
 
-load_dotenv()   # pick up HUGGINGFACEHUB_API_TOKEN from .env for the "hf" backend
 DetectorFactory.seed = 0   # make langdetect deterministic
 
 # CONFIGURATION --------------------------------------------------------------------------
 
-# "ollama" (local/eval) or "hf" (deploy); the LLM_BACKEND env var overrides the config
-LLM_BACKEND = os.getenv("LLM_BACKEND", CFG["generation"]["backend"])
-OLLAMA_MODEL = CFG["generation"]["ollama_model"]
-HF_MODEL = CFG["generation"]["hf_model"]   # same model as OLLAMA_MODEL, on HF Inference
+MODEL = CFG["generation"]["model"]   # Ollama model tag
 MAX_NEW_TOKENS = CFG["generation"]["max_new_tokens"]
 TEMPERATURE = CFG["generation"]["temperature"]   # 0 = greedy
 
@@ -53,33 +41,11 @@ SYSTEM_PROMPT = (
 
 # UTILITY FUNCTIONS -----------------------------------------------------------------------
 
-def _get_llm(backend=None):
+def _get_llm():
     """
-    Build the chat model for the selected backend. With temperature 0 both are
-    deterministic (greedy) so eval runs are reproducible.
+    Build the local Ollama chat model. Greedy (temperature 0) so runs are reproducible.
     """
-    backend = backend or LLM_BACKEND
-
-    if backend == "ollama":
-        # Local, offline, free — used for evaluation.
-        return ChatOllama(model=OLLAMA_MODEL, temperature=TEMPERATURE, num_predict=MAX_NEW_TOKENS)
-
-    if backend == "hf":
-        # Same model on HF Inference Providers — used for deployment. ChatHuggingFace
-        # wraps the raw endpoint so it accepts SystemMessage/HumanMessage lists.
-        # HF rejects temperature=0, so greedy is expressed as do_sample=False instead.
-        sampling = {"do_sample": True, "temperature": TEMPERATURE} if TEMPERATURE > 0 \
-            else {"do_sample": False}   # greedy -> deterministic, good for eval
-        endpoint = HuggingFaceEndpoint(
-            repo_id=HF_MODEL,
-            task="text-generation",
-            provider="auto",            # let HF route to an available provider
-            max_new_tokens=MAX_NEW_TOKENS,
-            **sampling,
-        )
-        return ChatHuggingFace(llm=endpoint)
-
-    raise ValueError(f"Unknown LLM_BACKEND {backend!r}; use 'ollama' or 'hf'")
+    return ChatOllama(model=MODEL, temperature=TEMPERATURE, num_predict=MAX_NEW_TOKENS)
 
 
 def _build_context(hits):
@@ -127,21 +93,14 @@ def _error_catch(exc):
     shows a clean message instead of a stack trace. Messages are bilingual (PT/EN)
     since the app answers in either language.
     """
-    status = getattr(getattr(exc, "response", None), "status_code", None)
-    text = str(exc).lower()
-
-    if status == 402 or any(w in text for w in ("exceeded", "credit", "payment required", "quota")):
-        return ("quota_exceeded",
-                "O limite de utilização mensal foi atingido. Tente novamente mais tarde.\n"
-                "The monthly usage limit has been reached. Please try again later.")
-    if status == 429 or any(w in text for w in ("rate limit", "too many requests")):
-        return ("rate_limited",
-                "O assistente está ocupado. Aguarde um momento e tente novamente.\n"
-                "The assistant is busy right now. Please wait a moment and try again.")
-    if status == 503 or any(w in text for w in ("loading", "unavailable", "503")):
-        return ("model_unavailable",
-                "O modelo está a iniciar. Tente novamente dentro de alguns segundos.\n"
-                "The model is starting up. Please retry in a few seconds.")
+    if isinstance(exc, httpx.ConnectError):
+        return ("ollama_unreachable",
+                "Não foi possível contactar o Ollama. Confirme que está a correr (`ollama serve`).\n"
+                "Could not reach Ollama. Make sure it is running (`ollama serve`).")
+    if getattr(exc, "status_code", None) == 404 and "not found" in str(exc).lower():
+        return ("model_missing",
+                f"O modelo {MODEL} não está instalado. Execute `ollama pull {MODEL}`.\n"
+                f"The model {MODEL} is not installed. Run `ollama pull {MODEL}`.")
 
     return ("error",
             "Ocorreu um erro ao contactar o modelo de linguagem. Tente novamente.\n"
@@ -151,13 +110,11 @@ def _error_catch(exc):
 class Generator:
     """
     Retrieve + generate. Loads the retriever (with its local bge-m3) and the LLM client once; reuse across queries.
-
-    backend: "ollama" | "hf" | None (None -> LLM_BACKEND env, else generation.backend).
     """
 
-    def __init__(self, retriever=None, backend=None):
+    def __init__(self, retriever=None):
         self.retriever = retriever or Retriever()
-        self.llm = _get_llm(backend)
+        self.llm = _get_llm()
 
     def answer(self, query, k=None, search_type=None):
         """
