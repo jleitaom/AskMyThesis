@@ -94,7 +94,7 @@ ollama pull qwen2.5:7b     # generation (qwen2.5:3b works if RAM is tight)
 ollama pull gemma3:12b     # eval judge (only needed for generation eval)
 ```
 
-`bge-m3` (about 2 GB) downloads automatically from Hugging Face the first time the index is built or queried.
+`bge-m3` (about 4 GB) downloads automatically from Hugging Face the first time the index is built or queried; no account or token is needed, and after that it runs offline.
 
 ---
 
@@ -144,6 +144,8 @@ streamlit run app.py
 ```
 
 This opens a chat UI: ask in Portuguese or English, read the grounded answer as it streams in, and expand **Sources** to see the cited thesis sections (with retrieval distances). The app retrieves the top 4 chunks per question (`retrieval.k`). Everything runs locally, so Ollama must be running (`ollama serve`, or the Ollama app).
+
+Streamlit's file watcher is turned off in `.streamlit/config.toml` (it logs a traceback for every `transformers` vision module that needs `torchvision`), so the app doesn't auto-reload: restart it or press **Rerun** after editing code.
 
 Smoke tests without the UI:
 
